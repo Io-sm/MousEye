@@ -1,0 +1,16 @@
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\bin\Debug\Cam2.exe.config
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\bin\Debug\Cam2.exe
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\bin\Debug\Cam2.pdb
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\obj\Debug\Cam2.csprojResolveAssemblyReference.cache
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\obj\Debug\MainWindow.g.cs
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\obj\Debug\App.g.cs
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\obj\Debug\GeneratedInternalTypeHelper.g.cs
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\obj\Debug\Cam2_MarkupCompile.cache
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\obj\Debug\Cam2_MarkupCompile.lref
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\obj\Debug\MainWindow.baml
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\obj\Debug\Cam2.g.resources
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\obj\Debug\Cam2.Properties.Resources.resources
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\obj\Debug\Cam2.csproj.GenerateResource.Cache
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\obj\Debug\Cam2.exe
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\obj\Debug\Cam2.pdb
+c:\users\kuba\documents\visual studio 2013\Projects\Cam2\Cam2\bin\Debug\MousEye.exe.config

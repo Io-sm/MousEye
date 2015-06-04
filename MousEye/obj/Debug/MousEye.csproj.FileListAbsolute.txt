@@ -1,0 +1,15 @@
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\bin\Debug\MousEye.exe.config
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\bin\Debug\MousEye.exe
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\bin\Debug\MousEye.pdb
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\obj\Debug\MousEye.csprojResolveAssemblyReference.cache
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\obj\Debug\MainWindow.g.cs
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\obj\Debug\App.g.cs
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\obj\Debug\MousEye_MarkupCompile.cache
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\obj\Debug\MousEye_MarkupCompile.lref
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\obj\Debug\MainWindow.baml
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\obj\Debug\MousEye.g.resources
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\obj\Debug\MousEye.Properties.Resources.resources
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\obj\Debug\MousEye.csproj.GenerateResource.Cache
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\obj\Debug\MousEye.exe
+C:\Users\Kuba\Documents\Visual Studio 2013\Projects\MousEye\MousEye\obj\Debug\MousEye.pdb
