@@ -1,63 +1,64 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace MousEye
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-        private int numCameras = 0;
+        private int _numCameras;
 
         public MainWindow()
         {
             InitializeComponent();
-            this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
-            this.Closing += new System.ComponentModel.CancelEventHandler(MainWindow_Closing);
+            Loaded += MainWindow_Loaded;
+            Closing += MainWindow_Closing;
+            CheckBox1.Checked += CheckBox1OnChecked;
+            CheckBox1.Unchecked += CheckBox1OnUnchecked;
+            Siki.ValueChanged += SikiOnValueChanged;
+        }
+
+        private void SikiOnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> routedPropertyChangedEventArgs)
+        {
+            var slider = sender as Slider;
+            if (slider != null) CameraImage1.CameraDevice.Gain = (int)slider.Value;
+        }
+
+        private void CheckBox1OnUnchecked(object sender, RoutedEventArgs routedEventArgs)
+        {
+            CameraImage1.CameraDevice.HorizontalFlip = false;
+        }
+
+        private void CheckBox1OnChecked(object sender, RoutedEventArgs routedEventArgs)
+        {
+            CameraImage1.CameraDevice.HorizontalFlip = true;
         }
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (numCameras >= 1)
-            {
-                cameraImage1.CameraDevice.Stop();
-                cameraImage1.CameraDevice.Destroy();
-            }
-            if (numCameras == 2)
-            {
-                cameraImage2.CameraDevice.Stop();
-                cameraImage2.CameraDevice.Destroy();
-            }
+            if (_numCameras < 1) return;
+            CameraImage1.CameraDevice.Stop();
+            CameraImage1.CameraDevice.Destroy();
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            // Query for number of connected cameras
-            numCameras = CameraDevice.CameraCount;
-            if (numCameras == 0)
+            _numCameras = CameraDevice.CameraCount;
+            if (_numCameras == 0)
             {
                 MessageBox.Show("Could not find any PS3Eye cameras!");
                 return;
             }
-            output.Items.Add(string.Format("Found {0} CLEyeCamera devices", numCameras));
-            // Show camera's UUIDs
-            for (int i = 0; i < numCameras; i++)
+            Output.Items.Add(string.Format("Found {0} CLEyeCamera devices", _numCameras));
+            for (var i = 0; i < _numCameras; i++)
             {
-                output.Items.Add(string.Format("CLEyeCamera #{0} UUID: {1}", i + 1, CameraDevice.CameraUUID(i)));
+                Output.Items.Add(string.Format("CLEyeCamera #{0} UUID: {1}", i + 1, CameraDevice.CameraUuid(i)));
             }
-            // Create cameras, set some parameters and start capture
-            if (numCameras >= 1)
-            {
-                cameraImage1.CameraDevice.Create(CameraDevice.CameraUUID(0));
-                cameraImage1.CameraDevice.Zoom = -50;
-                cameraImage1.CameraDevice.Start();
-            }
-            if (numCameras == 2)
-            {
-                cameraImage2.CameraDevice.Create(CameraDevice.CameraUUID(1));
-                cameraImage2.CameraDevice.Rotation = 200;
-                cameraImage2.CameraDevice.Start();
-            }
+
+            if (_numCameras < 1) return;
+
+            CameraImage1.CameraDevice.Create(CameraDevice.CameraUuid(0));
+            CameraImage1.CameraDevice.Zoom = -50;
+            CameraImage1.CameraDevice.Start();
         }
     }
 }

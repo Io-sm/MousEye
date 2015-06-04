@@ -7,64 +7,55 @@ using System.Windows.Media;
 
 namespace MousEye
 {
-    #region [ Camera Parameters ]
+    #region PARAMETRY KAMERY
 
-    // camera color mode
-    public enum CLEyeCameraColorMode
+    public enum CameraColorMode                                 //Tryb obrazu
     {
-        CLEYE_MONO_PROCESSED,
-        CLEYE_COLOR_PROCESSED,
-        CLEYE_MONO_RAW,
-        CLEYE_COLOR_RAW,
-        CLEYE_BAYER_RAW
+        MONO_RAW,
+        MONO_PROCESSED
     };
 
-    // camera resolution
-    public enum CLEyeCameraResolution
+    public enum CameraResolution                                //Rozdzielczość kamery
     {
-        CLEYE_QVGA,
-        CLEYE_VGA
+        QVGA,                                                   //320x240
+        VGA                                                     //640x480
     };
 
-    // camera parameters
-    public enum CLEyeCameraParameter
+    public enum CameraParameter                                 //Parametry kamery
     {
-        // camera sensor parameters
-        CLEYE_AUTO_GAIN,			// [false, true]
+        // parametry sensora
+        AUTO_GAIN,			                                    // [false, true]
 
-        CLEYE_GAIN,					// [0, 79]
-        CLEYE_AUTO_EXPOSURE,		// [false, true]
-        CLEYE_EXPOSURE,				// [0, 511]
-        CLEYE_AUTO_WHITEBALANCE,	// [false, true]
-        CLEYE_WHITEBALANCE_RED,		// [0, 255]
-        CLEYE_WHITEBALANCE_GREEN,	// [0, 255]
-        CLEYE_WHITEBALANCE_BLUE,	// [0, 255]
+        GAIN,					                                // [0, 79]
+        AUTO_EXPOSURE,		                                    // [false, true]
+        EXPOSURE,				                                // [0, 511]
+        AUTO_WHITEBALANCE,	                                    // [false, true]
+        WHITEBALANCE_RED,		                                // [0, 255]
+        WHITEBALANCE_GREEN,	                                    // [0, 255]
+        WHITEBALANCE_BLUE,	                                    // [0, 255]
 
-        // camera linear transform parameters
-        CLEYE_HFLIP,				// [false, true]
+        // parametry transformacji kamery
+        HFLIP,				                                    // [false, true]
+        VFLIP,				                                    // [false, true]
+        HKEYSTONE,			                                    // [-500, 500]
+        VKEYSTONE,			                                    // [-500, 500]
+        XOFFSET,				                                // [-500, 500]
+        YOFFSET,				                                // [-500, 500]
+        ROTATION,				                                // [-500, 500]
+        ZOOM,					                                // [-500, 500]
 
-        CLEYE_VFLIP,				// [false, true]
-        CLEYE_HKEYSTONE,			// [-500, 500]
-        CLEYE_VKEYSTONE,			// [-500, 500]
-        CLEYE_XOFFSET,				// [-500, 500]
-        CLEYE_YOFFSET,				// [-500, 500]
-        CLEYE_ROTATION,				// [-500, 500]
-        CLEYE_ZOOM,					// [-500, 500]
-
-        // camera non-linear transform parameters
-        CLEYE_LENSCORRECTION1,		// [-500, 500]
-
-        CLEYE_LENSCORRECTION2,		// [-500, 500]
-        CLEYE_LENSCORRECTION3,		// [-500, 500]
-        CLEYE_LENSBRIGHTNESS		// [-500, 500]
+        // inne parametry kamery
+        LENSCORRECTION1,		                                // [-500, 500]
+        LENSCORRECTION2,		                                // [-500, 500]
+        LENSCORRECTION3,		                                // [-500, 500]
+        LENSBRIGHTNESS		                                    // [-500, 500]
     };
 
-    #endregion [ Camera Parameters ]
+    #endregion PARAMETRY KAMERY
 
     public class CameraDevice : DependencyObject, IDisposable
-
     {
-        #region [ CLEyeMulticam Imports ]
+        #region BIBLIOTEKI DLL
 
         [DllImport("CLEyeMulticam.dll")]
         public static extern int CLEyeGetCameraCount();
@@ -73,7 +64,7 @@ namespace MousEye
         public static extern Guid CLEyeGetCameraUUID(int camId);
 
         [DllImport("CLEyeMulticam.dll")]
-        public static extern IntPtr CLEyeCreateCamera(Guid camUUID, CLEyeCameraColorMode mode, CLEyeCameraResolution res, float frameRate);
+        public static extern IntPtr CLEyeCreateCamera(Guid camUuid, CameraColorMode mode, CameraResolution res, float frameRate);
 
         [DllImport("CLEyeMulticam.dll")]
         public static extern bool CLEyeDestroyCamera(IntPtr camera);
@@ -88,10 +79,10 @@ namespace MousEye
         public static extern bool CLEyeCameraLED(IntPtr camera, bool on);
 
         [DllImport("CLEyeMulticam.dll")]
-        public static extern bool CLEyeSetCameraParameter(IntPtr camera, CLEyeCameraParameter param, int value);
+        public static extern bool CLEyeSetCameraParameter(IntPtr camera, CameraParameter param, int value);
 
         [DllImport("CLEyeMulticam.dll")]
-        public static extern int CLEyeGetCameraParameter(IntPtr camera, CLEyeCameraParameter param);
+        public static extern int CLEyeGetCameraParameter(IntPtr camera, CameraParameter param);
 
         [DllImport("CLEyeMulticam.dll")]
         public static extern bool CLEyeCameraGetFrameDimensions(IntPtr camera, ref int width, ref int height);
@@ -111,9 +102,9 @@ namespace MousEye
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool CloseHandle(IntPtr hHandle);
 
-        #endregion [ CLEyeMulticam Imports ]
+        #endregion BIBLIOTEKI DLL
 
-        #region [ Private ]
+        #region ZMIENNE PRYWATNE
 
         private IntPtr _map = IntPtr.Zero;
         private IntPtr _section = IntPtr.Zero;
@@ -121,47 +112,43 @@ namespace MousEye
         private bool _running;
         private Thread _workerThread;
 
-        #endregion [ Private ]
+        #endregion ZMIENNE PRYWATNE
 
-        #region [ Events ]
+        #region EVENTY
 
         public event EventHandler BitmapReady;
 
-        #endregion [ Events ]
+        #endregion EVENTY
 
-        #region [ Properties ]
+        #region WŁAŚCIWOŚCI
 
         public float Framerate { get; set; }
 
-        public CLEyeCameraColorMode ColorMode { get; set; }
+        public CameraColorMode ColorMode { get; set; }
 
-        public CLEyeCameraResolution Resolution { get; set; }
+        public CameraResolution Resolution { get; set; }
 
         public bool AutoGain
         {
             get
             {
-                if (_camera == null) return false;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_AUTO_GAIN) != 0;
+                return CLEyeGetCameraParameter(_camera, CameraParameter.AUTO_GAIN) != 0;
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_AUTO_GAIN, value ? 1 : 0);
+                CLEyeSetCameraParameter(_camera, CameraParameter.AUTO_GAIN, value ? 1 : 0);
             }
         }
 
-        public int Gain
+        public int Gain                                     //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_GAIN);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.GAIN);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_GAIN, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.GAIN, value);
             }
         }
 
@@ -169,27 +156,23 @@ namespace MousEye
         {
             get
             {
-                if (_camera == null) return false;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_AUTO_EXPOSURE) != 0;
+                return CLEyeGetCameraParameter(_camera, CameraParameter.AUTO_EXPOSURE) != 0;
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_AUTO_EXPOSURE, value ? 1 : 0);
+                CLEyeSetCameraParameter(_camera, CameraParameter.AUTO_EXPOSURE, value ? 1 : 0);
             }
         }
 
-        public int Exposure
+        public int Exposure                                 //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_EXPOSURE);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.EXPOSURE);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_EXPOSURE, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.EXPOSURE, value);
             }
         }
 
@@ -197,240 +180,208 @@ namespace MousEye
         {
             get
             {
-                if (_camera == null) return true;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_AUTO_WHITEBALANCE) != 0;
+                return CLEyeGetCameraParameter(_camera, CameraParameter.AUTO_WHITEBALANCE) != 0;
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_AUTO_WHITEBALANCE, value ? 1 : 0);
+                CLEyeSetCameraParameter(_camera, CameraParameter.AUTO_WHITEBALANCE, value ? 1 : 0);
             }
         }
 
-        public int WhiteBalanceRed
+        public int WhiteBalanceRed                          //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_WHITEBALANCE_RED);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.WHITEBALANCE_RED);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_WHITEBALANCE_RED, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.WHITEBALANCE_RED, value);
             }
         }
 
-        public int WhiteBalanceGreen
+        public int WhiteBalanceGreen                        //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_WHITEBALANCE_GREEN);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.WHITEBALANCE_GREEN);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_WHITEBALANCE_GREEN, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.WHITEBALANCE_GREEN, value);
             }
         }
 
-        public int WhiteBalanceBlue
+        public int WhiteBalanceBlue                         //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_WHITEBALANCE_BLUE);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.WHITEBALANCE_BLUE);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_WHITEBALANCE_BLUE, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.WHITEBALANCE_BLUE, value);
             }
         }
 
-        public bool HorizontalFlip
+        public bool HorizontalFlip                          //OPCJE
         {
             get
             {
-                if (_camera == null) return false;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_HFLIP) != 0;
+                return CLEyeGetCameraParameter(_camera, CameraParameter.HFLIP) != 0;
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_HFLIP, value ? 1 : 0);
+                CLEyeSetCameraParameter(_camera, CameraParameter.HFLIP, value ? 1 : 0);
             }
         }
 
-        public bool VerticalFlip
+        public bool VerticalFlip                            //OPCJE
         {
             get
             {
-                if (_camera == null) return false;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_VFLIP) != 0;
+                return CLEyeGetCameraParameter(_camera, CameraParameter.VFLIP) != 0;
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_VFLIP, value ? 1 : 0);
+                CLEyeSetCameraParameter(_camera, CameraParameter.VFLIP, value ? 1 : 0);
             }
         }
 
-        public int HorizontalKeystone
+        public int HorizontalKeystone                       //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_HKEYSTONE);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.HKEYSTONE);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_HKEYSTONE, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.HKEYSTONE, value);
             }
         }
 
-        public int VerticalKeystone
+        public int VerticalKeystone                         //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_VKEYSTONE);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.VKEYSTONE);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_VKEYSTONE, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.VKEYSTONE, value);
             }
         }
 
-        public int XOffset
+        public int XOffset                                  //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_XOFFSET);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.XOFFSET);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_XOFFSET, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.XOFFSET, value);
             }
         }
 
-        public int YOffset
+        public int YOffset                                  //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_YOFFSET);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.YOFFSET);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_YOFFSET, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.YOFFSET, value);
             }
         }
 
-        public int Rotation
+        public int Rotation                                 //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_ROTATION);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.ROTATION);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_ROTATION, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.ROTATION, value);
             }
         }
 
-        public int Zoom
+        public int Zoom                                     //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_ZOOM);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.ZOOM);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_ZOOM, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.ZOOM, value);
             }
         }
 
-        public int LensCorrection1
+        public int LensCorrection1                          //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_LENSCORRECTION1);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.LENSCORRECTION1);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_LENSCORRECTION1, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.LENSCORRECTION1, value);
             }
         }
 
-        public int LensCorrection2
+        public int LensCorrection2                          //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_LENSCORRECTION2);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.LENSCORRECTION2);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_LENSCORRECTION2, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.LENSCORRECTION2, value);
             }
         }
 
-        public int LensCorrection3
+        public int LensCorrection3                          //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_LENSCORRECTION3);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.LENSCORRECTION3);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_LENSCORRECTION3, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.LENSCORRECTION3, value);
             }
         }
 
-        public int LensBrightness
+        public int LensBrightness                           //OPCJE
         {
             get
             {
-                if (_camera == null) return 0;
-                return CLEyeGetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_LENSBRIGHTNESS);
+                return CLEyeGetCameraParameter(_camera, CameraParameter.LENSBRIGHTNESS);
             }
             set
             {
-                if (_camera == null) return;
-                CLEyeSetCameraParameter(_camera, CLEyeCameraParameter.CLEYE_LENSBRIGHTNESS, value);
+                CLEyeSetCameraParameter(_camera, CameraParameter.LENSBRIGHTNESS, value);
             }
         }
 
-        #endregion [ Properties ]
+        #endregion WŁAŚCIWOŚCI
 
-        #region [ Static ]
+        #region METODY STATYCZNE
 
         public static int CameraCount { get { return CLEyeGetCameraCount(); } }
 
-        public static Guid CameraUUID(int idx)
+        public static Guid CameraUuid(int idx)
         {
             return CLEyeGetCameraUUID(idx);
         }
 
-        #endregion [ Static ]
+        #endregion METODY STATYCZNE
 
-        #region [ Dependency Properties ]
+        #region DEPENDENCY PROPERTIES
 
         public InteropBitmap BitmapSource
         {
@@ -443,21 +394,20 @@ namespace MousEye
 
         public static readonly DependencyProperty BitmapSourceProperty = BitmapSourcePropertyKey.DependencyProperty;
 
-        #endregion [ Dependency Properties ]
+        #endregion DEPENDENCY PROPERTIES
 
-        #region [ Methods ]
+        #region METODY
 
         public CameraDevice()
         {
-            // set default values
+            // wartości domyślne
             Framerate = 15;
-            ColorMode = default(CLEyeCameraColorMode);
-            Resolution = default(CLEyeCameraResolution);
+            ColorMode = default(CameraColorMode);
+            Resolution = default(CameraResolution);
         }
 
         ~CameraDevice()
         {
-            // Finalizer calls Dispose(false)
             Dispose(false);
         }
 
@@ -471,10 +421,9 @@ namespace MousEye
         {
             if (disposing)
             {
-                // free managed resources
                 Stop();
             }
-            // free native resources if there are any.
+
             Destroy();
         }
 
@@ -484,25 +433,14 @@ namespace MousEye
             _camera = CLEyeCreateCamera(cameraGuid, ColorMode, Resolution, Framerate);
             if (_camera == IntPtr.Zero) return false;
             CLEyeCameraGetFrameDimensions(_camera, ref w, ref h);
-            if (ColorMode == CLEyeCameraColorMode.CLEYE_COLOR_PROCESSED || ColorMode == CLEyeCameraColorMode.CLEYE_COLOR_RAW)
-            {
-                uint imageSize = (uint)w * (uint)h * 4;
-                // create memory section and map
-                _section = CreateFileMapping(new IntPtr(-1), IntPtr.Zero, 0x04, 0, imageSize, null);
-                _map = MapViewOfFile(_section, 0xF001F, 0, 0, imageSize);
-                BitmapSource = Imaging.CreateBitmapSourceFromMemorySection(_section, w, h, PixelFormats.Bgr32, w * 4, 0) as InteropBitmap;
-            }
-            else
-            {
-                uint imageSize = (uint)w * (uint)h;
-                // create memory section and map
-                _section = CreateFileMapping(new IntPtr(-1), IntPtr.Zero, 0x04, 0, imageSize, null);
-                _map = MapViewOfFile(_section, 0xF001F, 0, 0, imageSize);
-                BitmapSource = Imaging.CreateBitmapSourceFromMemorySection(_section, w, h, PixelFormats.Gray8, w, 0) as InteropBitmap;
-            }
-            // Invoke event
+
+            uint imageSize = (uint)w * (uint)h;
+            _section = CreateFileMapping(new IntPtr(-1), IntPtr.Zero, 0x04, 0, imageSize, null);
+            _map = MapViewOfFile(_section, 0xF001F, 0, 0, imageSize);
+            BitmapSource = Imaging.CreateBitmapSourceFromMemorySection(_section, w, h, PixelFormats.Gray8, w, 0) as InteropBitmap;
+
             if (BitmapReady != null) BitmapReady(this, null);
-            BitmapSource.Invalidate();
+            if (BitmapSource != null) BitmapSource.Invalidate();
             return true;
         }
 
@@ -513,17 +451,15 @@ namespace MousEye
                 UnmapViewOfFile(_map);
                 _map = IntPtr.Zero;
             }
-            if (_section != IntPtr.Zero)
-            {
-                CloseHandle(_section);
-                _section = IntPtr.Zero;
-            }
+            if (_section == IntPtr.Zero) return;
+            CloseHandle(_section);
+            _section = IntPtr.Zero;
         }
 
         public void Start()
         {
             _running = true;
-            _workerThread = new Thread(new ThreadStart(CaptureThread));
+            _workerThread = new Thread(CaptureThread);
             _workerThread.Start();
         }
 
@@ -537,23 +473,21 @@ namespace MousEye
         private void CaptureThread()
         {
             CLEyeCameraStart(_camera);
-            int i = 0;
+
             while (_running)
             {
-                if (CLEyeCameraGetFrame(_camera, _map, 500))
+                if (!CLEyeCameraGetFrame(_camera, _map, 500)) continue;
+                if (!_running) break;
+                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, (SendOrPostCallback)delegate
                 {
-                    if (!_running) break;
-                    Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, (SendOrPostCallback)delegate
-                    {
-                        BitmapSource.Invalidate();
-                    }, null);
-                    i++;
-                }
+                    BitmapSource.Invalidate();
+                }, null);
             }
+
             CLEyeCameraStop(_camera);
             CLEyeDestroyCamera(_camera);
         }
 
-        #endregion [ Methods ]
+        #endregion METODY
     }
 }

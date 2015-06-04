@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace MousEye
@@ -16,7 +15,6 @@ namespace MousEye
 
         ~CameraImage()
         {
-            // Finalizer calls Dispose(false)
             Dispose(false);
         }
 
@@ -33,63 +31,57 @@ namespace MousEye
 
         protected void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                // free managed resources
-                if (CameraDevice != null)
-                {
-                    CameraDevice.Stop();
-                    CameraDevice.Dispose();
-                    CameraDevice = null;
-                }
-            }
-            // free native resources if there are any.
+            if (!disposing) return;
+            if (CameraDevice == null) return;
+            CameraDevice.Stop();
+            CameraDevice.Dispose();
+            CameraDevice = null;
         }
 
-        #region [ Dependency Properties ]
+        //#region [ Dependency Properties ]
 
-        public float Framerate
-        {
-            get { return (float)GetValue(FramerateProperty); }
-            set { SetValue(FramerateProperty, value); }
-        }
+        //public float Framerate
+        //{
+        //    get { return (float)GetValue(FramerateProperty); }
+        //    set { SetValue(FramerateProperty, value); }
+        //}
 
-        public static readonly DependencyProperty FramerateProperty =
-            DependencyProperty.Register("Framerate", typeof(float), typeof(CameraImage),
-            new UIPropertyMetadata((float)15, (PropertyChangedCallback)delegate(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-            {
-                CameraImage typedSender = sender as CameraImage;
-                typedSender.CameraDevice.Framerate = (float)e.NewValue;
-            }));
+        //public static readonly DependencyProperty FramerateProperty =
+        //    DependencyProperty.Register("Framerate", typeof(float), typeof(CameraImage),
+        //    new UIPropertyMetadata((float)15, (PropertyChangedCallback)delegate(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        //    {
+        //        CameraImage typedSender = sender as CameraImage;
+        //        typedSender.CameraDevice.Framerate = (float)e.NewValue;
+        //    }));
 
-        public CLEyeCameraColorMode ColorMode
-        {
-            get { return (CLEyeCameraColorMode)GetValue(ColorModeProperty); }
-            set { SetValue(ColorModeProperty, value); }
-        }
+        //public CameraColorMode ColorMode
+        //{
+        //    get { return (CameraColorMode)GetValue(ColorModeProperty); }
+        //    set { SetValue(ColorModeProperty, value); }
+        //}
 
-        public static readonly DependencyProperty ColorModeProperty =
-            DependencyProperty.Register("ColorMode", typeof(CLEyeCameraColorMode), typeof(CameraImage),
-            new UIPropertyMetadata(default(CLEyeCameraColorMode), (PropertyChangedCallback)delegate(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-            {
-                CameraImage typedSender = sender as CameraImage;
-                typedSender.CameraDevice.ColorMode = (CLEyeCameraColorMode)e.NewValue;
-            }));
+        //public static readonly DependencyProperty ColorModeProperty =
+        //    DependencyProperty.Register("ColorMode", typeof(CameraColorMode), typeof(CameraImage),
+        //    new UIPropertyMetadata(default(CameraColorMode), (PropertyChangedCallback)delegate(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        //    {
+        //        CameraImage typedSender = sender as CameraImage;
+        //        typedSender.CameraDevice.ColorMode = (CameraColorMode)e.NewValue;
+        //    }));
 
-        public CLEyeCameraResolution Resolution
-        {
-            get { return (CLEyeCameraResolution)GetValue(ResolutionProperty); }
-            set { SetValue(ResolutionProperty, value); }
-        }
+        //public CameraResolution Resolution
+        //{
+        //    get { return (CameraResolution)GetValue(ResolutionProperty); }
+        //    set { SetValue(ResolutionProperty, value); }
+        //}
 
-        public static readonly DependencyProperty ResolutionProperty =
-            DependencyProperty.Register("Resolution", typeof(CLEyeCameraResolution), typeof(CameraImage),
-            new UIPropertyMetadata(default(CLEyeCameraResolution), (PropertyChangedCallback)delegate(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-            {
-                CameraImage typedSender = sender as CameraImage;
-                typedSender.CameraDevice.Resolution = (CLEyeCameraResolution)e.NewValue;
-            }));
+        //public static readonly DependencyProperty ResolutionProperty =
+        //    DependencyProperty.Register("Resolution", typeof(CameraResolution), typeof(CameraImage),
+        //    new UIPropertyMetadata(default(CameraResolution), (PropertyChangedCallback)delegate(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        //    {
+        //        CameraImage typedSender = sender as CameraImage;
+        //        typedSender.CameraDevice.Resolution = (CameraResolution)e.NewValue;
+        //    }));
 
-        #endregion [ Dependency Properties ]
+        //#endregion [ Dependency Properties ]
     }
 }
