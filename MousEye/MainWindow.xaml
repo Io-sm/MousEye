@@ -1,13 +1,10 @@
 ﻿<Window x:Class="MousEye.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:MousEye"
+    xmlns:local="clr-namespace:MousEye.Views"
     Title="CLEyeMulticamWPFTest" Height="540" Width="800" Background="Gray">
-    <Grid>
-        <local:CameraImage x:Name="CameraImage1" Margin="10,10,0,0" Width="320" Height="240" HorizontalAlignment="Left"  VerticalAlignment="Top" />
-        <ListBox Name="Output" Height="240" Margin="335,10,10,0" VerticalAlignment="Top" IsTextSearchEnabled="False" IsHitTestVisible="False" Background="LightGray" />
-        <CheckBox Name="CheckBox1" Content="KUPA" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="669,339,0,0" Height="58" Width="113" />
-        <Slider Name="Siki" HorizontalAlignment="Left" Height="18" Margin="434,397,0,0" VerticalAlignment="Top" Width="235" Maximum="79" Minimum="0" />
-        <Label Content="{Binding ElementName = Siki, Path=Value}" HorizontalAlignment="Left" Height="35" Margin="465,339,0,0" VerticalAlignment="Top" Width="120" />
-    </Grid>
+
+    <Window.Content>
+        <local:CameraView />
+    </Window.Content>
 </Window>
