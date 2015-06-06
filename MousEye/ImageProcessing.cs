@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AForge.Imaging.Filters;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -63,11 +64,26 @@ namespace MousEye
             return bitmap;
         }
 
-        public static InteropBitmap Proc(InteropBitmap bmp)
+        private static Bitmap ApplyGS(Bitmap bmp)
+        {
+            var temp = bmp;
+
+            var filter = Grayscale.CommonAlgorithms.BT709;
+            temp = filter.Apply(temp);
+
+            return temp;
+        }
+
+        public static void Proc(InteropBitmap bmp)
         {
             var bitmap = Invert(bmp);
 
-            return InvertedBitmap = Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero,
+            InvertedBitmap = Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero,
+                Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()) as InteropBitmap;
+
+            bitmap = ApplyGS(bitmap);
+
+            GrayScaleBitmap = Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero,
                 Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()) as InteropBitmap;
         }
     }

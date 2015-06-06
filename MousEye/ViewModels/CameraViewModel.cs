@@ -82,6 +82,18 @@ namespace MousEye.ViewModels
             }
         }
 
+        private BitmapSource _test3;
+
+        public BitmapSource Test3
+        {
+            get { return _test3; }
+            set
+            {
+                _test3 = value;
+                NotifyPropertyChanged("Test3");
+            }
+        }
+
         public CameraDevice CameraDevice { get; set; }
 
         #endregion WŁAŚCIWOŚCI
@@ -109,7 +121,9 @@ namespace MousEye.ViewModels
 
         private void TestOnChanged(object sender, EventArgs eventArgs)
         {
-            Test2 = ImageProcessing.Proc(CameraDevice.BitmapSource);
+            ImageProcessing.Proc(CameraDevice.BitmapSource);
+            Test2 = ImageProcessing.InvertedBitmap;
+            Test3 = ImageProcessing.GrayScaleBitmap;
         }
 
         #endregion KONSTRUKTOR
