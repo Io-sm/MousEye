@@ -476,8 +476,10 @@ namespace MousEye
 
             while (_running)
             {
-                if (!CLEyeCameraGetFrame(_camera, _map, 500)) continue;
-                if (!_running) break;
+                if (!CLEyeCameraGetFrame(_camera, _map, 500))
+                    continue;
+                if (!_running) 
+                    break;
                 Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, (SendOrPostCallback)delegate
                 {
                     BitmapSource.Invalidate();

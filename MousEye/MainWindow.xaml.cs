@@ -57,7 +57,7 @@ namespace MousEye
             if (_numCameras < 1) return;
 
             CameraImage1.CameraDevice.Create(CameraDevice.CameraUuid(0));
-            CameraImage1.CameraDevice.Zoom = -50;
+            CameraImage1.CameraDevice.Zoom = 0;
             CameraImage1.CameraDevice.Start();
         }
     }
