@@ -15,7 +15,7 @@
         <Image Source="{Binding Test3}" Width="380" Height="240" Margin="10,390,410,0" VerticalAlignment="Top" IsHitTestVisible="False" />
 
         <Button Content="Start" IsEnabled="{Binding IsStartEnabled}" Command="{Binding StartCommand}" HorizontalAlignment="Left" Height="57" Margin="526,390,0,0" VerticalAlignment="Top" Width="148" />
-        <!-- <CheckBox Name="CheckBox1" Content="KUPA" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="669,339,0,0" Height="58" Width="113" />
-        <Slider Name="Siki" HorizontalAlignment="Left" Height="18" Margin="434,397,0,0" VerticalAlignment="Top" Width="235" Maximum="79" Minimum="0" />-->
+        <Slider x:Name="ThresholdSlider" Value="{Binding Threshold}"  HorizontalAlignment="Left" Minimum ="0" Maximum="1" Height="25" Margin="447,524,0,0" VerticalAlignment="Top" Width="303" />
+        <Label Content="{Binding ElementName=ThresholdSlider, Path=Value}" HorizontalAlignment="Left" Height="36" Margin="512,483,0,0" VerticalAlignment="Top" Width="200" />
     </Grid>
 </UserControl>

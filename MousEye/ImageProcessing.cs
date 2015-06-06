@@ -1,5 +1,4 @@
-﻿using AForge.Imaging.Filters;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -26,8 +25,6 @@ namespace MousEye
         }
 
         public static InteropBitmap InvertedBitmap { get; private set; }
-
-        public static InteropBitmap GrayScaleBitmap { get; private set; }
 
         public static InteropBitmap BinaryBitmap { get; private set; }
 
@@ -64,26 +61,63 @@ namespace MousEye
             return bitmap;
         }
 
-        private static Bitmap ApplyGS(Bitmap bmp)
+        private static Bitmap ApplyThreshold(Bitmap bmp, double threshold)
         {
-            var temp = bmp;
+            var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
 
-            var filter = Grayscale.CommonAlgorithms.BT709;
-            temp = filter.Apply(temp);
+            var data = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
+            var numBytes = data.Stride * bmp.Height;
+            var rgbValues = new byte[numBytes];
+            Marshal.Copy(data.Scan0, rgbValues, 0, numBytes);
+            bmp.UnlockBits(data);
 
-            return temp;
+            for (var i = 0; i < numBytes; i += 4)
+            {
+                if (rgbValues[i] > threshold * 255)
+                {
+                    rgbValues[i] = 255;
+                }
+                else
+                {
+                    rgbValues[i] = 0;
+                }
+
+                if (rgbValues[i + 1] > threshold * 255)
+                {
+                    rgbValues[i + 1] = 255;
+                }
+                else
+                {
+                    rgbValues[i + 1] = 0;
+                }
+
+                if (rgbValues[i + 2] > threshold * 255)
+                {
+                    rgbValues[i + 2] = 255;
+                }
+                else
+                {
+                    rgbValues[i + 2] = 0;
+                }
+            }
+
+            var bitmapWrite = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
+            Marshal.Copy(rgbValues, 0, bitmapWrite.Scan0, numBytes);
+            bmp.UnlockBits(bitmapWrite);
+
+            return bmp;
         }
 
-        public static void Proc(InteropBitmap bmp)
+        public static void Proc(InteropBitmap bmp, double threshold)
         {
             var bitmap = Invert(bmp);
 
             InvertedBitmap = Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero,
                 Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()) as InteropBitmap;
 
-            bitmap = ApplyGS(bitmap);
+            bitmap = ApplyThreshold(bitmap, threshold);
 
-            GrayScaleBitmap = Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero,
+            BinaryBitmap = Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero,
                 Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()) as InteropBitmap;
         }
     }

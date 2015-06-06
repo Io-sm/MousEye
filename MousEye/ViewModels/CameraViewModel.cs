@@ -96,6 +96,18 @@ namespace MousEye.ViewModels
 
         public CameraDevice CameraDevice { get; set; }
 
+        private double _threshold;
+
+        public double Threshold
+        {
+            get { return _threshold; }
+            set
+            {
+                _threshold = value;
+                NotifyPropertyChanged("Threshold");
+            }
+        }
+
         #endregion WŁAŚCIWOŚCI
 
         #region KONSTRUKTOR
@@ -121,9 +133,9 @@ namespace MousEye.ViewModels
 
         private void TestOnChanged(object sender, EventArgs eventArgs)
         {
-            ImageProcessing.Proc(CameraDevice.BitmapSource);
+            ImageProcessing.Proc(CameraDevice.BitmapSource, Threshold);
             Test2 = ImageProcessing.InvertedBitmap;
-            Test3 = ImageProcessing.GrayScaleBitmap;
+            Test3 = ImageProcessing.BinaryBitmap;
         }
 
         #endregion KONSTRUKTOR
