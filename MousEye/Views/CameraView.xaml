@@ -9,9 +9,10 @@
              d:DataContext="{d:DesignInstance viewModels:CameraViewModel}">
 
     <Grid>
-        <TextBlock Text="{Binding Message}" Background="LightGray" TextWrapping="Wrap" Height="90" Width="380" Margin="10,344,410,266" />
+        <TextBlock Text="{Binding Message}" Background="LightGray" TextWrapping="Wrap" Width="380" Margin="10,344,410,226" />
         <Image Source="{Binding Test}" Width="380" Height="240" Margin="10,10,410,0" VerticalAlignment="Top" IsHitTestVisible="False" />
         <Image Source="{Binding Test2}" Width="380" Height="240" Margin="410,10,10,0" VerticalAlignment="Top" IsHitTestVisible="False" />
+        <Button Content="Start" IsEnabled="{Binding IsStartEnabled}" Command="{Binding StartCommand}" HorizontalAlignment="Left" Height="57" Margin="84,522,0,0" VerticalAlignment="Top" Width="148" />
         <!-- <CheckBox Name="CheckBox1" Content="KUPA" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="669,339,0,0" Height="58" Width="113" />
         <Slider Name="Siki" HorizontalAlignment="Left" Height="18" Margin="434,397,0,0" VerticalAlignment="Top" Width="235" Maximum="79" Minimum="0" />-->
     </Grid>

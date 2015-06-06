@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Practices.Prism.Commands;
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Interop;
@@ -20,7 +21,30 @@ namespace MousEye.ViewModels
 
         #endregion ZMIENNE PRYWATNE
 
+        #region KOMENDY
+
+        private readonly DelegateCommand _startCommand;
+
+        public DelegateCommand StartCommand
+        {
+            get { return _startCommand; }
+        }
+
+        #endregion KOMENDY
+
         #region WŁAŚCIWOŚCI
+
+        private bool _isStartEnabled;
+
+        public bool IsStartEnabled
+        {
+            get { return _isStartEnabled; }
+            set
+            {
+                _isStartEnabled = value;
+                NotifyPropertyChanged("IsStartEnabled");
+            }
+        }
 
         private string _message;
 
@@ -66,10 +90,10 @@ namespace MousEye.ViewModels
 
         public CameraViewModel()
         {
+            IsStartEnabled = true;
             Application.Current.Exit += CurrentOnExit;
 
-            CameraDevice = new CameraDevice();
-            CameraDevice.BitmapReady += OnBitmapReady;
+            _startCommand = new DelegateCommand(OnStart);
 
             _cameraNum = CameraDevice.CameraCount;
 
@@ -81,10 +105,11 @@ namespace MousEye.ViewModels
 
             Message = string.Format("Found {0} CLEyeCamera devices\r\n" +
                                     "Camera ID: {1}", _cameraNum, CameraDevice.CameraUuid(0));
+        }
 
-            CameraDevice.Create(CameraDevice.CameraUuid(0));
-            CameraDevice.Zoom = 0;
-            CameraDevice.Start();
+        private void TestOnChanged(object sender, EventArgs eventArgs)
+        {
+            Test2 = ImageProcessing.Proc(CameraDevice.BitmapSource);
         }
 
         #endregion KONSTRUKTOR
@@ -109,8 +134,20 @@ namespace MousEye.ViewModels
         private void OnBitmapReady(object sender, EventArgs e)
         {
             Test = CameraDevice.BitmapSource;
-            ImageProcessing.OriginalBitmap = Test;
-            Test2 = ImageProcessing.InvertedBitmap; //CameraDevice.BitmapSource;
+            Test.Changed += TestOnChanged;
+        }
+
+        private void OnStart()
+        {
+            IsStartEnabled = false;
+
+            CameraDevice = new CameraDevice();
+            CameraDevice.BitmapReady += OnBitmapReady;
+
+            CameraDevice.Create(CameraDevice.CameraUuid(0));
+            CameraDevice.Zoom = 0;
+            CameraDevice.Framerate = 60;
+            CameraDevice.Start();
         }
 
         #endregion METODY

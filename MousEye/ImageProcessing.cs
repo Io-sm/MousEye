@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using Color = System.Drawing.Color;
 
 namespace MousEye
 {
@@ -23,7 +24,7 @@ namespace MousEye
             }
         }
 
-        public static BitmapSource InvertedBitmap { get; private set; }
+        public static InteropBitmap InvertedBitmap { get; private set; }
 
         public static InteropBitmap GrayScaleBitmap { get; private set; }
 
@@ -32,7 +33,6 @@ namespace MousEye
         private static Bitmap Invert(InteropBitmap bmp)
         {
             var temp = bmp;
-            Color c;
 
             var ms = new MemoryStream();
             BitmapEncoder encoder = new PngBitmapEncoder();
@@ -41,24 +41,34 @@ namespace MousEye
             ms.Seek(0, SeekOrigin.Begin);
             var bitmap = new Bitmap(ms);
 
-            for (int i = 0; i < bitmap.Width; i++)
+            var rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+
+            var data = bitmap.LockBits(rect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
+            var numBytes = data.Stride * bitmap.Height;
+            var rgbValues = new byte[numBytes];
+            Marshal.Copy(data.Scan0, rgbValues, 0, numBytes);
+            bitmap.UnlockBits(data);
+
+            for (var i = 0; i < numBytes; i += 4)
             {
-                for (int j = 0; j < bitmap.Height; j++)
-                {
-                    c = bitmap.GetPixel(i, j);
-                    bitmap.SetPixel(i, j, Color.FromArgb(255 - c.R, 255 - c.G, 255 - c.B));
-                }
+                rgbValues[i] = (byte)(255 - rgbValues[i]);
+                rgbValues[i + 1] = (byte)(255 - rgbValues[i + 1]);
+                rgbValues[i + 2] = (byte)(255 - rgbValues[i + 2]);
             }
+
+            var bitmapWrite = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly, bitmap.PixelFormat);
+            Marshal.Copy(rgbValues, 0, bitmapWrite.Scan0, numBytes);
+            bitmap.UnlockBits(bitmapWrite);
 
             return bitmap;
         }
 
-        public static BitmapSource Proc(InteropBitmap bmp)
+        public static InteropBitmap Proc(InteropBitmap bmp)
         {
             var bitmap = Invert(bmp);
 
             return InvertedBitmap = Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero,
-                Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()) as InteropBitmap;
         }
     }
 }
