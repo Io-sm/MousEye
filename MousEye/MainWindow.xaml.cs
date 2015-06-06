@@ -13,7 +13,7 @@
             //CheckBox1.Unchecked += CheckBox1OnUnchecked;
             //Siki.ValueChanged += SikiOnValueChanged;
             //ImageProcessing.GetCan(can);
-        }
+        
 
         //    private void SikiOnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> routedPropertyChangedEventArgs)
         //    {
@@ -40,12 +40,10 @@
         //        //can.Background = temp;
         //    }
 
-<<<<<<< HEAD
-            CameraImage1.CameraDevice.Create(CameraDevice.CameraUuid(0));
-            CameraImage1.CameraDevice.Zoom = 0;
-            CameraImage1.CameraDevice.Start();
+            //CameraImage1.CameraDevice.Create(CameraDevice.CameraUuid(0));
+            //CameraImage1.CameraDevice.Zoom = 0;
+            //CameraImage1.CameraDevice.Start();
         }
-=======
         //    private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         //    {
         //        if (_numCameras < 1) return;
@@ -74,6 +72,5 @@
         //        CameraImage1.CameraDevice.Start();
         //    }
         //}
->>>>>>> 740c135cc02859ce59ab54a1d30541dbd83b0ded
     }
 }
