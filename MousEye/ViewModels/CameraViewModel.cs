@@ -21,23 +21,25 @@ namespace MousEye.ViewModels
             }
         }
 
-        private CameraImage _cameraDevice;
+        private CameraImage _cameraImage;
 
         public CameraImage CameraImage
         {
             get
             {
-                return _cameraDevice;
+                return _cameraImage;
             }
             set
             {
-                _cameraDevice = value;
+                _cameraImage = value;
                 NotifyPropertyChanged("CameraImage");
             }
         }
 
         public CameraViewModel()
         {
+            Application.Current.Exit += CurrentOnExit;
+
             CameraImage = new CameraImage();
 
             _cameraNum = CameraDevice.CameraCount;
@@ -56,6 +58,13 @@ namespace MousEye.ViewModels
             CameraImage.CameraDevice.Start();
         }
 
+        private void CurrentOnExit(object sender, ExitEventArgs exitEventArgs)
+        {
+            if (_cameraNum < 1) return;
+            CameraImage.CameraDevice.Stop();
+            CameraImage.CameraDevice.Destroy();
+        }
+
         protected void NotifyPropertyChanged(string info)
         {
             if (PropertyChanged != null)
@@ -63,14 +72,5 @@ namespace MousEye.ViewModels
                 PropertyChanged(this, new PropertyChangedEventArgs(info));
             }
         }
-
-        //protected virtual void OnRequestClose()
-        //{
-        //    if (_cameraNum < 1) return;
-        //    CameraImage.CameraDevice.Stop();
-        //    CameraImage.CameraDevice.Destroy();
-
-        //    if (RequestClose != null) RequestClose();
-        //}
     }
 }
