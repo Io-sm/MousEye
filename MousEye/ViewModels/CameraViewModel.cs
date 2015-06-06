@@ -94,6 +94,18 @@ namespace MousEye.ViewModels
             }
         }
 
+        private BitmapSource _test4;
+
+        public BitmapSource Test4
+        {
+            get { return _test4; }
+            set
+            {
+                _test4 = value;
+                NotifyPropertyChanged("Test4");
+            }
+        }
+
         public CameraDevice CameraDevice { get; set; }
 
         private double _threshold;
@@ -136,6 +148,7 @@ namespace MousEye.ViewModels
             ImageProcessing.Proc(CameraDevice.BitmapSource, Threshold);
             Test2 = ImageProcessing.InvertedBitmap;
             Test3 = ImageProcessing.BinaryBitmap;
+            Test4 = ImageProcessing.TestBitmap;
         }
 
         #endregion KONSTRUKTOR

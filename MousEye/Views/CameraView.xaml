@@ -9,13 +9,13 @@
              d:DataContext="{d:DesignInstance viewModels:CameraViewModel}">
 
     <Grid>
-        <TextBlock Text="{Binding Message}" Background="LightGray" TextWrapping="Wrap" Width="380" Margin="410,255,10,315" />
+        <TextBlock Text="{Binding Message}" Background="LightGray" TextWrapping="Wrap" Width="380" Margin="10,554,410,61" />
         <Image Source="{Binding Test}" Width="380" Height="240" Margin="10,10,410,0" VerticalAlignment="Top" IsHitTestVisible="False" />
         <Image Source="{Binding Test2}" Width="380" Height="240" Margin="410,10,10,0" VerticalAlignment="Top" IsHitTestVisible="False" />
-        <Image Source="{Binding Test3}" Width="380" Height="240" Margin="10,390,410,0" VerticalAlignment="Top" IsHitTestVisible="False" />
-
-        <Button Content="Start" IsEnabled="{Binding IsStartEnabled}" Command="{Binding StartCommand}" HorizontalAlignment="Left" Height="57" Margin="526,390,0,0" VerticalAlignment="Top" Width="148" />
-        <Slider x:Name="ThresholdSlider" Value="{Binding Threshold}"  HorizontalAlignment="Left" Minimum ="0" Maximum="1" Height="25" Margin="447,524,0,0" VerticalAlignment="Top" Width="303" />
-        <Label Content="{Binding ElementName=ThresholdSlider, Path=Value}" HorizontalAlignment="Left" Height="36" Margin="512,483,0,0" VerticalAlignment="Top" Width="200" />
+        <Image Source="{Binding Test3}" Width="380" Height="240" Margin="10,309,410,0" VerticalAlignment="Top" IsHitTestVisible="False" />
+        <Image Source="{Binding Test4}" Width="380" Height="240" Margin="410,255,10,0" VerticalAlignment="Top" IsHitTestVisible="False" />
+        <Button Content="Start" IsEnabled="{Binding IsStartEnabled}" Command="{Binding StartCommand}" HorizontalAlignment="Left" Height="43" Margin="524,500,0,0" VerticalAlignment="Top" Width="148" />
+        <Slider x:Name="ThresholdSlider" Value="{Binding Threshold}"  HorizontalAlignment="Left" Minimum ="0" Maximum="1" Height="25" Margin="447,584,0,0" VerticalAlignment="Top" Width="303" />
+        <Label Content="{Binding ElementName=ThresholdSlider, Path=Value}" HorizontalAlignment="Left" Height="36" Margin="502,548,0,0" VerticalAlignment="Top" Width="200" />
     </Grid>
 </UserControl>
