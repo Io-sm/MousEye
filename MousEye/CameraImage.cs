@@ -5,7 +5,7 @@ namespace MousEye
 {
     public class CameraImage : Image, IDisposable
     {
-        public CameraDevice CameraDevice { get; private set; }
+        public CameraDevice CameraDevice { get; set; }
 
         public CameraImage()
         {
@@ -21,6 +21,7 @@ namespace MousEye
         private void OnBitmapReady(object sender, EventArgs e)
         {
             Source = CameraDevice.BitmapSource;
+            ImageProcessing.Proc(CameraDevice.BitmapSource);
         }
 
         public void Dispose()
