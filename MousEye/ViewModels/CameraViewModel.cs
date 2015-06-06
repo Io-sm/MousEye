@@ -1,13 +1,26 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 
 namespace MousEye.ViewModels
 {
     public class CameraViewModel : INotifyPropertyChanged
     {
+        #region EVENTY
+
         public event PropertyChangedEventHandler PropertyChanged;
 
+        #endregion EVENTY
+
+        #region ZMIENNE PRYWATNE
+
         private readonly int _cameraNum;
+
+        #endregion ZMIENNE PRYWATNE
+
+        #region WŁAŚCIWOŚCI
 
         private string _message;
 
@@ -21,26 +34,42 @@ namespace MousEye.ViewModels
             }
         }
 
-        private CameraImage _cameraImage;
+        private InteropBitmap _test;
 
-        public CameraImage CameraImage
+        public InteropBitmap Test
         {
-            get
-            {
-                return _cameraImage;
-            }
+            get { return _test; }
             set
             {
-                _cameraImage = value;
-                NotifyPropertyChanged("CameraImage");
+                _test = value;
+                NotifyPropertyChanged("Test");
             }
         }
+
+        private BitmapSource _test2;
+
+        public BitmapSource Test2
+        {
+            get { return _test2; }
+            set
+            {
+                _test2 = value;
+                NotifyPropertyChanged("Test2");
+            }
+        }
+
+        public CameraDevice CameraDevice { get; set; }
+
+        #endregion WŁAŚCIWOŚCI
+
+        #region KONSTRUKTOR
 
         public CameraViewModel()
         {
             Application.Current.Exit += CurrentOnExit;
 
-            CameraImage = new CameraImage();
+            CameraDevice = new CameraDevice();
+            CameraDevice.BitmapReady += OnBitmapReady;
 
             _cameraNum = CameraDevice.CameraCount;
 
@@ -53,16 +82,20 @@ namespace MousEye.ViewModels
             Message = string.Format("Found {0} CLEyeCamera devices\r\n" +
                                     "Camera ID: {1}", _cameraNum, CameraDevice.CameraUuid(0));
 
-            CameraImage.CameraDevice.Create(CameraDevice.CameraUuid(0));
-            CameraImage.CameraDevice.Zoom = -50;
-            CameraImage.CameraDevice.Start();
+            CameraDevice.Create(CameraDevice.CameraUuid(0));
+            CameraDevice.Zoom = 0;
+            CameraDevice.Start();
         }
+
+        #endregion KONSTRUKTOR
+
+        #region METODY
 
         private void CurrentOnExit(object sender, ExitEventArgs exitEventArgs)
         {
             if (_cameraNum < 1) return;
-            CameraImage.CameraDevice.Stop();
-            CameraImage.CameraDevice.Destroy();
+            CameraDevice.Stop();
+            CameraDevice.Destroy();
         }
 
         protected void NotifyPropertyChanged(string info)
@@ -72,5 +105,14 @@ namespace MousEye.ViewModels
                 PropertyChanged(this, new PropertyChangedEventArgs(info));
             }
         }
+
+        private void OnBitmapReady(object sender, EventArgs e)
+        {
+            Test = CameraDevice.BitmapSource;
+            ImageProcessing.OriginalBitmap = Test;
+            Test2 = ImageProcessing.InvertedBitmap; //CameraDevice.BitmapSource;
+        }
+
+        #endregion METODY
     }
 }

@@ -2,9 +2,7 @@
 using System.Drawing;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Color = System.Drawing.Color;
 
@@ -14,13 +12,6 @@ namespace MousEye
     {
         private static InteropBitmap _originalBitmap;
 
-        private static Canvas can;
-
-        public static void GetCan(Canvas _can)
-        {
-            can = _can;
-        }
-
         public static InteropBitmap OriginalBitmap
         {
             get { return _originalBitmap; }
@@ -29,7 +20,6 @@ namespace MousEye
             {
                 if (value == null) return;
                 _originalBitmap = value;
-                //Proc();
             }
         }
 
@@ -63,19 +53,12 @@ namespace MousEye
             return bitmap;
         }
 
-        public static void Proc(InteropBitmap bmp)
+        public static BitmapSource Proc(InteropBitmap bmp)
         {
             var bitmap = Invert(bmp);
 
-            InvertedBitmap = Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero,
+            return InvertedBitmap = Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero,
                 Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
-            var temp = new ImageBrush
-            {
-                ImageSource = InvertedBitmap
-            };
-
-            //can.Background = temp;
         }
     }
 }

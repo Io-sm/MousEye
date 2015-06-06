@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace MousEye
 {
@@ -36,6 +37,7 @@ namespace MousEye
 
         // parametry transformacji kamery
         HFLIP,				                                    // [false, true]
+
         VFLIP,				                                    // [false, true]
         HKEYSTONE,			                                    // [-500, 500]
         VKEYSTONE,			                                    // [-500, 500]
@@ -46,6 +48,7 @@ namespace MousEye
 
         // inne parametry kamery
         LENSCORRECTION1,		                                // [-500, 500]
+
         LENSCORRECTION2,		                                // [-500, 500]
         LENSCORRECTION3,		                                // [-500, 500]
         LENSBRIGHTNESS		                                    // [-500, 500]
@@ -478,7 +481,7 @@ namespace MousEye
             {
                 if (!CLEyeCameraGetFrame(_camera, _map, 500))
                     continue;
-                if (!_running) 
+                if (!_running)
                     break;
                 Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, (SendOrPostCallback)delegate
                 {

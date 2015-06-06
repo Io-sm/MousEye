@@ -91,7 +91,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CameraDevice.cs" />
-    <Compile Include="CameraImage.cs" />
     <Compile Include="ImageProcessing.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

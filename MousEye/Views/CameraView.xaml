@@ -5,15 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              xmlns:viewModels="clr-namespace:MousEye.ViewModels"
-             d:DesignHeight="400" d:DesignWidth="400"
+             d:DesignHeight="700" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance viewModels:CameraViewModel}">
 
     <Grid>
-        <ContentControl Width="380" Height="240" Content="{Binding CameraImage}" Margin="10,10,10,150" />
-        <!--<ListBox Name="Output" Visibility="Collapsed" Height="240" Margin="335,10,10,0" VerticalAlignment="Top" IsTextSearchEnabled="False" IsHitTestVisible="False" Background="LightGray" />
-        <Canvas Name="can" Width="340" Height="240" Margin="335,10,10,0" VerticalAlignment="Top" IsHitTestVisible="False" Background="LightGray" />
-        <CheckBox Name="CheckBox1" Content="KUPA" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="669,339,0,0" Height="58" Width="113" />
+        <TextBlock Text="{Binding Message}" Background="LightGray" TextWrapping="Wrap" Height="90" Width="380" Margin="10,344,410,266" />
+        <Image Source="{Binding Test}" Width="380" Height="240" Margin="10,10,410,0" VerticalAlignment="Top" IsHitTestVisible="False" />
+        <Image Source="{Binding Test2}" Width="380" Height="240" Margin="410,10,10,0" VerticalAlignment="Top" IsHitTestVisible="False" />
+        <!-- <CheckBox Name="CheckBox1" Content="KUPA" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="669,339,0,0" Height="58" Width="113" />
         <Slider Name="Siki" HorizontalAlignment="Left" Height="18" Margin="434,397,0,0" VerticalAlignment="Top" Width="235" Maximum="79" Minimum="0" />-->
-        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" HorizontalAlignment="Left" Height="135" Margin="10,255,0,0" VerticalAlignment="Top" Width="380" />
     </Grid>
 </UserControl>
