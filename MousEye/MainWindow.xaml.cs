@@ -7,7 +7,6 @@
         public MainWindow()
         {
             InitializeComponent();
-
             //        //ImageProcessing.OriginalBitmap = CameraImage1.CameraDevice.BitmapSource;
 
             //        //var temp = new ImageBrush
