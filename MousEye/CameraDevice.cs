@@ -4,10 +4,11 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace MousEye
 {
-    #region PARAMETRY KAMERY
+    #region CAMERA PARAMETERS
 
     public enum CameraColorMode                                 //Tryb obrazu
     {
@@ -53,11 +54,11 @@ namespace MousEye
         LENSBRIGHTNESS		                                    // [-500, 500]
     };
 
-    #endregion PARAMETRY KAMERY
+    #endregion CAMERA PARAMETERS
 
     public class CameraDevice : DependencyObject, IDisposable
     {
-        #region BIBLIOTEKI DLL
+        #region DLLs
 
         [DllImport("CLEyeMulticam.dll")]
         public static extern int CLEyeGetCameraCount();
@@ -104,9 +105,12 @@ namespace MousEye
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool CloseHandle(IntPtr hHandle);
 
-        #endregion BIBLIOTEKI DLL
+        [DllImport("gdi32.dll")]
+        public static extern bool DeleteObject(IntPtr hObject);
 
-        #region ZMIENNE PRYWATNE
+        #endregion DLLs
+
+        #region PRIVATE
 
         private IntPtr _map = IntPtr.Zero;
         private IntPtr _section = IntPtr.Zero;
@@ -114,15 +118,15 @@ namespace MousEye
         private bool _running;
         private Thread _workerThread;
 
-        #endregion ZMIENNE PRYWATNE
+        #endregion PRIVATE
 
-        #region EVENTY
+        #region EVENTS
 
         public event EventHandler BitmapReady;
 
-        #endregion EVENTY
+        #endregion EVENTS
 
-        #region WŁAŚCIWOŚCI
+        #region CAMERA PROPERTIES
 
         public float Framerate { get; set; }
 
@@ -142,7 +146,7 @@ namespace MousEye
             }
         }
 
-        public int Gain                                     //OPCJE
+        public int Gain
         {
             get
             {
@@ -166,7 +170,7 @@ namespace MousEye
             }
         }
 
-        public int Exposure                                 //OPCJE
+        public int Exposure
         {
             get
             {
@@ -190,7 +194,7 @@ namespace MousEye
             }
         }
 
-        public int WhiteBalanceRed                          //OPCJE
+        public int WhiteBalanceRed
         {
             get
             {
@@ -202,7 +206,7 @@ namespace MousEye
             }
         }
 
-        public int WhiteBalanceGreen                        //OPCJE
+        public int WhiteBalanceGreen
         {
             get
             {
@@ -214,7 +218,7 @@ namespace MousEye
             }
         }
 
-        public int WhiteBalanceBlue                         //OPCJE
+        public int WhiteBalanceBlue
         {
             get
             {
@@ -226,7 +230,7 @@ namespace MousEye
             }
         }
 
-        public bool HorizontalFlip                          //OPCJE
+        public bool HorizontalFlip
         {
             get
             {
@@ -238,7 +242,7 @@ namespace MousEye
             }
         }
 
-        public bool VerticalFlip                            //OPCJE
+        public bool VerticalFlip
         {
             get
             {
@@ -250,7 +254,7 @@ namespace MousEye
             }
         }
 
-        public int HorizontalKeystone                       //OPCJE
+        public int HorizontalKeystone
         {
             get
             {
@@ -262,7 +266,7 @@ namespace MousEye
             }
         }
 
-        public int VerticalKeystone                         //OPCJE
+        public int VerticalKeystone
         {
             get
             {
@@ -274,7 +278,7 @@ namespace MousEye
             }
         }
 
-        public int XOffset                                  //OPCJE
+        public int XOffset
         {
             get
             {
@@ -286,7 +290,7 @@ namespace MousEye
             }
         }
 
-        public int YOffset                                  //OPCJE
+        public int YOffset
         {
             get
             {
@@ -298,7 +302,7 @@ namespace MousEye
             }
         }
 
-        public int Rotation                                 //OPCJE
+        public int Rotation
         {
             get
             {
@@ -310,7 +314,7 @@ namespace MousEye
             }
         }
 
-        public int Zoom                                     //OPCJE
+        public int Zoom
         {
             get
             {
@@ -322,7 +326,7 @@ namespace MousEye
             }
         }
 
-        public int LensCorrection1                          //OPCJE
+        public int LensCorrection1
         {
             get
             {
@@ -334,7 +338,7 @@ namespace MousEye
             }
         }
 
-        public int LensCorrection2                          //OPCJE
+        public int LensCorrection2
         {
             get
             {
@@ -346,7 +350,7 @@ namespace MousEye
             }
         }
 
-        public int LensCorrection3                          //OPCJE
+        public int LensCorrection3
         {
             get
             {
@@ -358,7 +362,7 @@ namespace MousEye
             }
         }
 
-        public int LensBrightness                           //OPCJE
+        public int LensBrightness
         {
             get
             {
@@ -370,9 +374,9 @@ namespace MousEye
             }
         }
 
-        #endregion WŁAŚCIWOŚCI
+        #endregion CAMERA PROPERTIES
 
-        #region METODY STATYCZNE
+        #region STATIC METHODS
 
         public static int CameraCount { get { return CLEyeGetCameraCount(); } }
 
@@ -381,7 +385,7 @@ namespace MousEye
             return CLEyeGetCameraUUID(idx);
         }
 
-        #endregion METODY STATYCZNE
+        #endregion STATIC METHODS
 
         #region DEPENDENCY PROPERTIES
 
@@ -398,11 +402,10 @@ namespace MousEye
 
         #endregion DEPENDENCY PROPERTIES
 
-        #region METODY
+        #region METHODS
 
         public CameraDevice()
         {
-            // wartości domyślne
             Framerate = 15;
             ColorMode = default(CameraColorMode);
             Resolution = default(CameraResolution);
@@ -425,7 +428,6 @@ namespace MousEye
             {
                 Stop();
             }
-
             Destroy();
         }
 
@@ -436,7 +438,7 @@ namespace MousEye
             if (_camera == IntPtr.Zero) return false;
             CLEyeCameraGetFrameDimensions(_camera, ref w, ref h);
 
-            uint imageSize = (uint)w * (uint)h;
+            var imageSize = (uint)w * (uint)h;
             _section = CreateFileMapping(new IntPtr(-1), IntPtr.Zero, 0x04, 0, imageSize, null);
             _map = MapViewOfFile(_section, 0xF001F, 0, 0, imageSize);
             BitmapSource = Imaging.CreateBitmapSourceFromMemorySection(_section, w, h, PixelFormats.Gray8, w, 0) as InteropBitmap;
@@ -482,7 +484,7 @@ namespace MousEye
                     continue;
                 if (!_running)
                     break;
-                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, (SendOrPostCallback)delegate
+                Dispatcher.BeginInvoke(DispatcherPriority.Render, (SendOrPostCallback)delegate
                 {
                     BitmapSource.Invalidate();
                 }, null);
@@ -492,6 +494,6 @@ namespace MousEye
             CLEyeDestroyCamera(_camera);
         }
 
-        #endregion METODY
+        #endregion METHODS
     }
 }
