@@ -343,6 +343,8 @@ namespace MousEye.ViewModels
             RedBalance = 0;
             GreenBalance = 0;
             BlueBalance = 0;
+
+            Threshold = 0.71;
         }
 
         private void OpenSettingsManager(string mode)

@@ -133,6 +133,13 @@ namespace MousEye
             byte[] rgbValues;
             var bitmap = ConvertToBitmap(originalBitmap, out rgbValues, out numBytes);
 
+            var max_y = 0;
+            var min_y = 240;
+            var max_x = 0;
+            var min_x = 320;
+
+            _temporaryByteOrder[0] = 5;
+
             for (var i = 0; i < numBytes; i += 4)
             {
                 if (_temporaryByteOrder[i] != 255 || _temporaryByteOrder[i + 1] != 255 ||
@@ -140,6 +147,36 @@ namespace MousEye
                 rgbValues[i] = 255;
                 rgbValues[i + 1] = 192;
                 rgbValues[i + 2] = 203;
+
+                if ((i - (i / 1280)) / 4 < min_x)
+                {
+                    min_x = (i - (i / 1280)) / 4;
+                }
+
+                if ((i - (i / 1280)) / 4 > max_x)
+                {
+                    max_x = (i - (i / 1280)) / 4;
+                }
+
+                if (i / 1280 < min_y)
+                {
+                    min_y = i / 1280;
+                }
+
+                if (i / 1280 > max_y)
+                {
+                    max_y = i / 1280;
+                }
+            }
+
+            for (var i = 0; i < numBytes; i += 4)
+            {
+                if (i > min_x && i < max_x)
+                {
+                    rgbValues[i] = 0;
+                    rgbValues[i + 1] = 0;
+                    rgbValues[i + 2] = 0;
+                }
             }
 
             var bitmapWrite = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly,
