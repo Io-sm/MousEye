@@ -11,16 +11,16 @@ namespace MouseMaipulation
                               int dwData, int dwExtraInfo);
 
         [Flags]
-        public enum MouseEventFlags
+        private enum MouseEventFlags
         {
-            LEFTDOWN = 0x00000002,
-            LEFTUP = 0x00000004,
-            MIDDLEDOWN = 0x00000020,
-            MIDDLEUP = 0x00000040,
-            MOVE = 0x00000001,
-            ABSOLUTE = 0x00008000,
-            RIGHTDOWN = 0x00000008,
-            RIGHTUP = 0x00000010
+            Leftdown = 0x00000002,
+            Leftup = 0x00000004,
+            Middledown = 0x00000020,
+            Middleup = 0x00000040,
+            Move = 0x00000001,
+            Absolute = 0x00008000,
+            Rightdown = 0x00000008,
+            Rightup = 0x00000010
         }
 
         [DllImport("user32.dll")]
@@ -37,10 +37,10 @@ namespace MouseMaipulation
             Console.ReadKey();
 
             Console.WriteLine(Cursor.Position.ToString());
-            mouse_event((int)MouseEventFlags.LEFTDOWN, 1850, 1000, 0, 0);
-            mouse_event((int)MouseEventFlags.LEFTUP, 1850, 1000, 0, 0);
-            mouse_event((int)MouseEventFlags.LEFTDOWN, 1850, 1000, 0, 0);
-            mouse_event((int)MouseEventFlags.LEFTUP, 1850, 1000, 0, 0);
+            mouse_event((int)MouseEventFlags.Leftdown, 1850, 1000, 0, 0);
+            mouse_event((int)MouseEventFlags.Leftup, 1850, 1000, 0, 0);
+            mouse_event((int)MouseEventFlags.Leftdown, 1850, 1000, 0, 0);
+            mouse_event((int)MouseEventFlags.Leftup, 1850, 1000, 0, 0);
 
 
             Console.ReadKey();
