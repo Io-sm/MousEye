@@ -334,17 +334,17 @@ namespace MousEye.ViewModels
 
         private void DefaultValues()
         {
-            HorizontalFlip = true;
-            VerticalFlip = false;
+            HorizontalFlip = false;
+            VerticalFlip = true;
             Framerate = 15;
-            Zoom = 0;
+            Zoom = 145;
             Exposure = 511;
             Gain = 0;
             RedBalance = 0;
             GreenBalance = 0;
             BlueBalance = 0;
 
-            Threshold = 0.71;
+            Threshold = 0.8;
         }
 
         private void OpenSettingsManager(string mode)

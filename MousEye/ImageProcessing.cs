@@ -138,24 +138,23 @@ namespace MousEye
             var max_x = 0;
             var min_x = 320;
 
-            _temporaryByteOrder[0] = 5;
-
             for (var i = 0; i < numBytes; i += 4)
             {
                 if (_temporaryByteOrder[i] != 255 || _temporaryByteOrder[i + 1] != 255 ||
                     _temporaryByteOrder[i + 2] != 255) continue;
+
                 rgbValues[i] = 255;
                 rgbValues[i + 1] = 192;
                 rgbValues[i + 2] = 203;
 
-                if ((i - (i / 1280)) / 4 < min_x)
+                if ((i - ((i / 1280)) * 1280) / 4 < min_x)
                 {
-                    min_x = (i - (i / 1280)) / 4;
+                    min_x = (i - ((i / 1280)) * 1280) / 4;
                 }
 
-                if ((i - (i / 1280)) / 4 > max_x)
+                if ((i - ((i / 1280)) * 1280) / 4 > max_x)
                 {
-                    max_x = (i - (i / 1280)) / 4;
+                    max_x = (i - ((i / 1280)) * 1280) / 4;
                 }
 
                 if (i / 1280 < min_y)
@@ -171,7 +170,7 @@ namespace MousEye
 
             for (var i = 0; i < numBytes; i += 4)
             {
-                if (i > min_x && i < max_x)
+                if (i > min_x * 1280 && i < max_x * 1280)
                 {
                     rgbValues[i] = 0;
                     rgbValues[i + 1] = 0;
