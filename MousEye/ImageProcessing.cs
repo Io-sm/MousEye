@@ -168,14 +168,13 @@ namespace MousEye
                 }
             }
 
-            for (var i = 0; i < numBytes; i += 4)
+            var a1 = (min_y*1280) + (min_y*4);
+            var a2 = (max_y * 1280) + (max_y * 4);
+            for (var i = a1; i < a2; i += 4)
             {
-                if (i > min_x * 1280 && i < max_x * 1280)
-                {
                     rgbValues[i] = 0;
                     rgbValues[i + 1] = 0;
                     rgbValues[i + 2] = 0;
-                }
             }
 
             var bitmapWrite = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly,
