@@ -13,6 +13,8 @@ namespace MousEye.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public event EventHandler ClosingRequest;
+
         #endregion EVENTS
 
         #region PRIVATE
@@ -35,6 +37,13 @@ namespace MousEye.ViewModels
         public DelegateCommand RestoreDefaultsCommand
         {
             get { return _restoreDefaultsCommand; }
+        }
+
+        private readonly DelegateCommand _mainteanceViewCommand;
+
+        public DelegateCommand MainteanceViewCommand
+        {
+            get { return _mainteanceViewCommand; }
         }
 
         #endregion COMMANDS
@@ -261,6 +270,18 @@ namespace MousEye.ViewModels
 
         public CameraDevice CameraDevice { get; private set; }
 
+        private bool _isMainteanceViewVisible;
+
+        public bool IsMainteanceViewVisible
+        {
+            get { return _isMainteanceViewVisible; }
+            set
+            {
+                _isMainteanceViewVisible = value;
+                NotifyPropertyChanged("IsMainteanceViewVisible");
+            }
+        }
+
         #endregion PROPERTIES
 
         #region CONSTRUCTORS
@@ -270,10 +291,13 @@ namespace MousEye.ViewModels
             _cameraIndex = CameraDevice.CameraCount;
             _settingsManagerCommand = new DelegateCommand<string>(OpenSettingsManager);
             _restoreDefaultsCommand = new DelegateCommand(DefaultValues);
+            _mainteanceViewCommand = new DelegateCommand(MainteanceViewVisibility);
 
             CalibrationViewModel = new CalibrationViewModel(this);
 
             Application.Current.Exit += OnCurrentExit;
+
+            IsMainteanceViewVisible = false;
 
             if (_cameraIndex < 1)
             {
@@ -283,8 +307,6 @@ namespace MousEye.ViewModels
 
             Message = string.Format("Found {0} CLEyeCamera devices\r\n" +
                                     "Camera ID: {1}", _cameraIndex, CameraDevice.CameraUuid(0));
-
-            OpenSettingsManager("calibration");
         }
 
         #endregion CONSTRUCTORS
@@ -316,6 +338,7 @@ namespace MousEye.ViewModels
             }
             catch (IndexOutOfRangeException)
             {
+                Threshold += 0.08;
             }
         }
 
@@ -351,26 +374,32 @@ namespace MousEye.ViewModels
 
         private void OpenSettingsManager(string mode)
         {
-            switch (mode)
+            if (CameraDevice == null)
             {
-                case "camera":
-
-                    if (CameraDevice == null)
-                    {
-                        MessageBox.Show("No cameras detected!");
-                        return;
-                    }
-
-                    SettingsManager.CameraSettings(this);
-
-                    break;
-
-                case "calibration":
-
-                    SettingsManager.CalibrationSettings(this);
-
-                    break;
+                MessageBox.Show("No cameras detected!");
+                return;
             }
+
+            SettingsManager.CameraSettings(this);
+        }
+
+        public void OnClosingRequest()
+        {
+            if (ClosingRequest != null)
+            {
+                ClosingRequest(this, EventArgs.Empty);
+            }
+        }
+
+        private void MainteanceViewVisibility()
+        {
+            if (!IsMainteanceViewVisible)
+            {
+                IsMainteanceViewVisible = true;
+                return;
+            }
+
+            IsMainteanceViewVisible = false;
         }
 
         #endregion METHODS

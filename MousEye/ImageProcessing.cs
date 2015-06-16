@@ -20,7 +20,7 @@ namespace MousEye
 
         private static bool _isFirstBitmap = true;
 
-        private static int[] _rectSize = new int[2];
+        private static readonly int[] RectSize = new int[2];
 
         private static Point _topLeft;
 
@@ -211,8 +211,8 @@ namespace MousEye
             Marshal.Copy(rgbValues, 0, bitmapWrite.Scan0, numBytes);
             bitmap.UnlockBits(bitmapWrite);
 
-            _rectSize[0] = _maxX - _minX;
-            _rectSize[1] = _maxY - _minY;
+            RectSize[0] = _maxX - _minX;
+            RectSize[1] = _maxY - _minY;
 
             _maxiX = _maxX;
             _miniX = _minX;
@@ -298,8 +298,8 @@ namespace MousEye
         {
             var temp = new int[2];
 
-            temp[0] = _rectSize[0];
-            temp[1] = _rectSize[1];
+            temp[0] = RectSize[0];
+            temp[1] = RectSize[1];
 
             return temp;
         }

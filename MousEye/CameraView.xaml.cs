@@ -1,4 +1,4 @@
-﻿namespace MousEye.Views
+﻿namespace MousEye
 {
     public partial class CameraView
     {

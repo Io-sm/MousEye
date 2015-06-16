@@ -1,5 +1,6 @@
 ﻿using Microsoft.Practices.Prism.Commands;
 using MousEye.Utility;
+using MousEye.Views;
 using MousEye.Views.CalibrationSteps;
 using System;
 using System.Collections.ObjectModel;
@@ -12,11 +13,15 @@ namespace MousEye.ViewModels
 {
     public class CalibrationViewModel : INotifyPropertyChanged
     {
-        private int _stepCount;
+        #region EVENTS
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private readonly CameraViewModel _viewModel;
+        #endregion EVENTS
+
+        #region PRIVATES
+
+        private int _stepCount;
 
         private Step4 _temp;
 
@@ -27,6 +32,12 @@ namespace MousEye.ViewModels
         private int _tick;
 
         private readonly DispatcherTimer _timer;
+
+        private readonly CameraViewModel _viewModel;
+
+        #endregion PRIVATES
+
+        #region PROPERTIES
 
         private HorizontalAlignment _horizontalAlignment;
 
@@ -114,6 +125,10 @@ namespace MousEye.ViewModels
             }
         }
 
+        #endregion PROPERTIES
+
+        #region COMMANDS
+
         private readonly DelegateCommand<string> _nextCommand;
 
         public DelegateCommand<string> NextCommand
@@ -141,6 +156,10 @@ namespace MousEye.ViewModels
         {
             get { return _calibrationFinishCommand; }
         }
+
+        #endregion COMMANDS
+
+        #region CONSTRUCTORS
 
         public CalibrationViewModel(CameraViewModel vm)
         {
@@ -170,48 +189,14 @@ namespace MousEye.ViewModels
             _calibrationFinishCommand = new DelegateCommand(CalibrationFinish);
         }
 
+        #endregion CONSTRUCTORS
+
+        #region METHODS
+
         private void CalibrationFinish()
         {
-        }
-
-        private void TimerOnTick(object sender, EventArgs eventArgs)
-        {
-            switch (_tick)
-            {
-                case 0:
-                    _tick++;
-                    IsElipseVisible = true;
-                    HorizontalAlignment = HorizontalAlignment.Left;
-                    VerticalAlignment = VerticalAlignment.Top;
-                    _timer.Interval = new TimeSpan(0, 0, 3);
-                    break;
-
-                case 1:
-                    ImageProcessing.SaveCoords(0);
-                    HorizontalAlignment = HorizontalAlignment.Right;
-                    _tick++;
-                    break;
-
-                case 2:
-                    ImageProcessing.SaveCoords(1);
-                    VerticalAlignment = VerticalAlignment.Bottom;
-                    _tick++;
-                    break;
-
-                case 3:
-                    ImageProcessing.SaveCoords(2);
-                    HorizontalAlignment = HorizontalAlignment.Left;
-                    _tick++;
-                    break;
-
-                case 4:
-                    ImageProcessing.SaveCoords(3);
-                    _tick = 0;
-                    _timer.Stop();
-                    IsElipseVisible = false;
-                    IsFinishVisible = true;
-                    break;
-            }
+            new MainteanceView(_viewModel);
+            _viewModel.OnClosingRequest();
         }
 
         private void CalibrationStart()
@@ -273,6 +258,56 @@ namespace MousEye.ViewModels
             }
         }
 
+        private void Capture()
+        {
+            IsNextEnabled = true;
+            _savedSize = ImageProcessing.GetRectSize();
+        }
+
+        #endregion METHODS
+
+        #region EVENT HANDLERS
+
+        private void TimerOnTick(object sender, EventArgs eventArgs)
+        {
+            switch (_tick)
+            {
+                case 0:
+                    _tick++;
+                    IsElipseVisible = true;
+                    HorizontalAlignment = HorizontalAlignment.Left;
+                    VerticalAlignment = VerticalAlignment.Top;
+                    _timer.Interval = new TimeSpan(0, 0, 3);
+                    break;
+
+                case 1:
+                    //ImageProcessing.SaveCoords(0);
+                    HorizontalAlignment = HorizontalAlignment.Right;
+                    _tick++;
+                    break;
+
+                case 2:
+                    //ImageProcessing.SaveCoords(1);
+                    VerticalAlignment = VerticalAlignment.Bottom;
+                    _tick++;
+                    break;
+
+                case 3:
+                    //ImageProcessing.SaveCoords(2);
+                    HorizontalAlignment = HorizontalAlignment.Left;
+                    _tick++;
+                    break;
+
+                case 4:
+                    //ImageProcessing.SaveCoords(3);
+                    _tick = 0;
+                    _timer.Stop();
+                    IsElipseVisible = false;
+                    IsFinishVisible = true;
+                    break;
+            }
+        }
+
         private void OnOriginalImageChanged(object sender, EventArgs eventArgs)
         {
             if (_savedSize == null)
@@ -319,11 +354,9 @@ namespace MousEye.ViewModels
             }
         }
 
-        private void Capture()
-        {
-            IsNextEnabled = true;
-            _savedSize = ImageProcessing.GetRectSize();
-        }
+        #endregion EVENT HANDLERS
+
+        #region UTILITIES
 
         protected void NotifyPropertyChanged(string info)
         {
@@ -332,5 +365,7 @@ namespace MousEye.ViewModels
                 PropertyChanged(this, new PropertyChangedEventArgs(info));
             }
         }
+
+        #endregion UTILITIES
     }
 }
