@@ -281,25 +281,25 @@ namespace MousEye.ViewModels
                     break;
 
                 case 1:
-                    //ImageProcessing.SaveCoords(0);
+                    ImageProcessing.SaveCoords(0);
                     HorizontalAlignment = HorizontalAlignment.Right;
                     _tick++;
                     break;
 
                 case 2:
-                    //ImageProcessing.SaveCoords(1);
+                    ImageProcessing.SaveCoords(1);
                     VerticalAlignment = VerticalAlignment.Bottom;
                     _tick++;
                     break;
 
                 case 3:
-                    //ImageProcessing.SaveCoords(2);
+                    ImageProcessing.SaveCoords(2);
                     HorizontalAlignment = HorizontalAlignment.Left;
                     _tick++;
                     break;
 
                 case 4:
-                    //ImageProcessing.SaveCoords(3);
+                    ImageProcessing.SaveCoords(3);
                     _tick = 0;
                     _timer.Stop();
                     IsElipseVisible = false;

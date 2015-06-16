@@ -11,6 +11,7 @@
         <Image Source="{Binding OriginalImage}" Width="380" Height="240" Margin="10,10,410,0" VerticalAlignment="Top" IsHitTestVisible="False" />
         <Image Source="{Binding InvertedImage}" Width="380" Height="240" Margin="410,10,10,0" VerticalAlignment="Top" IsHitTestVisible="False" />
         <Image Source="{Binding BinaryImage}" Width="380" Height="240" Margin="10,255,410,0" VerticalAlignment="Top" IsHitTestVisible="False" />
+        <Image Source="{Binding FinalImage}" Width="380" Height="240" Margin="414,255,0,0" VerticalAlignment="Top" IsHitTestVisible="False" />
         <Button Content="Settings" Command="{Binding SettingsManagerCommand}" CommandParameter="camera" HorizontalAlignment="Left" Height="31" Margin="10,614,0,0" VerticalAlignment="Top" Width="191" />
     </Grid>
 </Window>

@@ -6,7 +6,13 @@ namespace MousEye
 {
     public static class SettingsManager
     {
+        #region PRIVATES
+
         private static bool _cameraSettingsActive;
+
+        #endregion PRIVATES
+
+        #region CONSTRUCTORS
 
         public static void CameraSettings(CameraViewModel vm)
         {
@@ -17,9 +23,15 @@ namespace MousEye
             cameraSettingsWindow.Show();
         }
 
+        #endregion CONSTRUCTORS
+
+        #region EVENT HANDLERS
+
         private static void SettingsOnClosed(object sender, EventArgs eventArgs)
         {
             _cameraSettingsActive = false;
         }
+
+        #endregion EVENT HANDLERS
     }
 }
