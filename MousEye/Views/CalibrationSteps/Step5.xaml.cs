@@ -2,12 +2,14 @@
 
 namespace MousEye.Views.CalibrationSteps
 {
-    public partial class Step4
+    /// <summary>
+    /// Interaction logic for Step5.xaml
+    /// </summary>
+    public partial class Step5
     {
-        public Step4(CameraViewModel vm)
+        public Step5(CameraViewModel vm)
         {
             InitializeComponent();
-
             DataContext = vm;
         }
     }

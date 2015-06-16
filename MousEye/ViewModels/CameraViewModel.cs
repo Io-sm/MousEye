@@ -19,18 +19,9 @@ namespace MousEye.ViewModels
 
         private readonly int _cameraIndex;
 
-        private CameraDevice CameraDevice { get; set; }
-
         #endregion PRIVATE
 
         #region COMMANDS
-
-        private readonly DelegateCommand _startCommand;
-
-        public DelegateCommand StartCommand
-        {
-            get { return _startCommand; }
-        }
 
         private readonly DelegateCommand<string> _settingsManagerCommand;
 
@@ -254,18 +245,6 @@ namespace MousEye.ViewModels
 
         #region PROPERTIES
 
-        private bool _isStartEnabled;
-
-        public bool IsStartEnabled
-        {
-            get { return _isStartEnabled; }
-            set
-            {
-                _isStartEnabled = value;
-                NotifyPropertyChanged("IsStartEnabled");
-            }
-        }
-
         private string _message;
 
         public string Message
@@ -280,15 +259,15 @@ namespace MousEye.ViewModels
 
         public CalibrationViewModel CalibrationViewModel { get; private set; }
 
+        public CameraDevice CameraDevice { get; private set; }
+
         #endregion PROPERTIES
 
         #region CONSTRUCTORS
 
         public CameraViewModel()
         {
-            IsStartEnabled = true;
             _cameraIndex = CameraDevice.CameraCount;
-            _startCommand = new DelegateCommand(Start);
             _settingsManagerCommand = new DelegateCommand<string>(OpenSettingsManager);
             _restoreDefaultsCommand = new DelegateCommand(DefaultValues);
 
@@ -304,6 +283,8 @@ namespace MousEye.ViewModels
 
             Message = string.Format("Found {0} CLEyeCamera devices\r\n" +
                                     "Camera ID: {1}", _cameraIndex, CameraDevice.CameraUuid(0));
+
+            OpenSettingsManager("calibration");
         }
 
         #endregion CONSTRUCTORS
@@ -335,10 +316,6 @@ namespace MousEye.ViewModels
             }
             catch (IndexOutOfRangeException)
             {
-                if (Threshold <= 1)
-                {
-                    Threshold += 0.08;
-                }
             }
         }
 
@@ -346,10 +323,8 @@ namespace MousEye.ViewModels
 
         #region METHODS
 
-        private void Start()
+        public void Start()
         {
-            IsStartEnabled = false;
-
             CameraDevice = new CameraDevice();
 
             CameraDevice.BitmapReady += OnBitmapReady;
@@ -376,15 +351,15 @@ namespace MousEye.ViewModels
 
         private void OpenSettingsManager(string mode)
         {
-            if (CameraDevice == null)
-            {
-                MessageBox.Show("No cameras detected!");
-                return;
-            }
-
             switch (mode)
             {
                 case "camera":
+
+                    if (CameraDevice == null)
+                    {
+                        MessageBox.Show("No cameras detected!");
+                        return;
+                    }
 
                     SettingsManager.CameraSettings(this);
 

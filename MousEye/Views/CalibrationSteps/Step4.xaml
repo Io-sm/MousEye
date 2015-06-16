@@ -3,16 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:viewModels="clr-namespace:MousEye.ViewModels"
         Title="" ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
-        WindowState="Maximized" WindowStyle="None">
+        WindowState="Maximized" WindowStyle="None" Background="Gray" x:Name="Step3View">
 
     <Window.DataContext>
         <viewModels:CameraViewModel />
     </Window.DataContext>
 
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+
     <Grid>
-        <Ellipse Fill="Green" HorizontalAlignment="Left" Height="30" Margin="-15,-15,0,0" Stroke="Black" VerticalAlignment="Top" Width="30" />
-        <Ellipse Fill="Green" HorizontalAlignment="Right" Height="30" Margin="755,-15,-17,520" Stroke="Black" VerticalAlignment="Top" Width="30" />
-        <Ellipse Fill="Green" HorizontalAlignment="Right" Height="30" Margin="755,520,-17,-15" Stroke="Black" VerticalAlignment="Bottom" Width="30" />
-        <Ellipse Fill="Green" HorizontalAlignment="Left" Height="30" Margin="-15,520,0,-15" Stroke="Black" VerticalAlignment="Bottom" Width="30" />
+        <Ellipse Fill="Red" HorizontalAlignment="{Binding CalibrationViewModel.HorizontalAlignment}" Visibility="{Binding CalibrationViewModel.IsElipseVisible, Converter={StaticResource BooleanToVisibilityConverter}}" Height="25" Stroke="Black" VerticalAlignment="{Binding CalibrationViewModel.VerticalAlignment}" Width="25" Grid.RowSpan="2" />
+        <TextBlock FontSize="20" Visibility="{Binding CalibrationViewModel.IsContentVisible, Converter={StaticResource BooleanToVisibilityConverter}}" TextAlignment="Center" Margin="200" TextWrapping="Wrap" Text="Every 3 seconds point will be visible in each corner of the screen. Focus on them to let the application determine maximal values of the position of your eye." />
+        <Button Content="Start" Visibility="{Binding CalibrationViewModel.IsContentVisible, Converter={StaticResource BooleanToVisibilityConverter}}" Command="{Binding CalibrationViewModel.CalibrationStartCommand}" Margin="312,349,312,0" HorizontalAlignment="Center" Width="144" Height="49" VerticalAlignment="Top" />
+        <Button Content="Finish" Command="{Binding CalibrationViewModel.NextCommand}" CommandParameter="{Binding ElementName=Step3View, Path=Name}" Visibility="{Binding CalibrationViewModel.IsFinishVisible, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="312,349,312,0" HorizontalAlignment="Center" Width="144" Height="49" VerticalAlignment="Top" />
     </Grid>
 </Window>

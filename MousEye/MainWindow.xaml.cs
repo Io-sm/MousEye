@@ -1,19 +1,27 @@
-﻿namespace MousEye
+﻿using System.Windows;
+
+namespace MousEye
 {
     public partial class MainWindow
     {
+        private bool _isVisible;
+
         public MainWindow()
         {
             InitializeComponent();
+        }
 
-            //        //ImageProcessing.OriginalBitmap = CameraImage1.CameraDevice.BitmapSource;
+        private void TaskbarIcon_OnTrayLeftMouseDown(object sender, RoutedEventArgs e)
+        {
+            if (_isVisible)
+            {
+                Visibility = Visibility.Hidden;
+                _isVisible = false;
+                return;
+            }
 
-            //        //var temp = new ImageBrush
-            //        //{
-            //        //    ImageSource = ImageProcessing.InvertedBitmap
-            //        //};
-
-            //        //can.Background = temp;
+            Visibility = Visibility.Visible;
+            _isVisible = true;
         }
     }
 }

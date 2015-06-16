@@ -5,16 +5,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              xmlns:viewModels="clr-namespace:MousEye.ViewModels"
-             d:DesignHeight="700" d:DesignWidth="800"
-             d:DataContext="{d:DesignInstance viewModels:CameraViewModel}">
+             d:DesignHeight="700" d:DesignWidth="800">
+
+    <UserControl.DataContext>
+        <viewModels:CameraViewModel />
+    </UserControl.DataContext>
 
     <Grid>
         <TextBlock Text="{Binding Message}" Background="LightGray" TextWrapping="Wrap" Width="380" Margin="10,500,410,91" />
         <Image Source="{Binding OriginalImage}" Width="380" Height="240" Margin="10,10,410,0" VerticalAlignment="Top" IsHitTestVisible="False" />
         <Image Source="{Binding InvertedImage}" Width="380" Height="240" Margin="410,10,10,0" VerticalAlignment="Top" IsHitTestVisible="False" />
         <Image Source="{Binding BinaryImage}" Width="380" Height="240" Margin="10,255,410,0" VerticalAlignment="Top" IsHitTestVisible="False" />
-        <Button Content="Start" IsEnabled="{Binding IsStartEnabled}" Command="{Binding StartCommand}" HorizontalAlignment="Left" Height="43" Margin="524,500,0,0" VerticalAlignment="Top" Width="148" />
         <Button Content="Settings" Command="{Binding SettingsManagerCommand}" CommandParameter="camera" HorizontalAlignment="Left" Height="31" Margin="10,614,0,0" VerticalAlignment="Top" Width="191" />
-        <Button Content="Calibration" Command="{Binding SettingsManagerCommand}" CommandParameter="calibration" HorizontalAlignment="Left" Height="31" Margin="206,614,0,0" VerticalAlignment="Top" Width="191" />
     </Grid>
 </UserControl>

@@ -3,11 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:viewModels="clr-namespace:MousEye.ViewModels"
         Title="Camera Calibration Settings" Height="600" Width="600"
-        WindowStartupLocation="CenterScreen" Background="Gray" ResizeMode="NoResize">
-
-    <Window.DataContext>
-        <viewModels:CameraViewModel />
-    </Window.DataContext>
+        WindowStartupLocation="CenterScreen" Background="Gray" ResizeMode="NoResize"
+        DataContext="{Binding RelativeSource={RelativeSource PreviousData}}">
 
     <TabControl ItemsSource="{Binding CalibrationViewModel.TabCategory}"
         SelectedItem="{Binding CalibrationViewModel.SelectedCategory}" Background="Gray">

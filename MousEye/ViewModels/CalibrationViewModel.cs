@@ -5,6 +5,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace MousEye.ViewModels
 {
@@ -16,11 +18,53 @@ namespace MousEye.ViewModels
 
         private readonly CameraViewModel _viewModel;
 
-        private bool _isNextEnabled;
+        private Step4 _temp;
 
         private int[] _savedSize;
 
         private int _counter;
+
+        private int _tick;
+
+        private readonly DispatcherTimer _timer;
+
+        private HorizontalAlignment _horizontalAlignment;
+
+        public HorizontalAlignment HorizontalAlignment
+        {
+            get { return _horizontalAlignment; }
+            set
+            {
+                _horizontalAlignment = value;
+                NotifyPropertyChanged("HorizontalAlignment");
+            }
+        }
+
+        private VerticalAlignment _verticalAlignment;
+
+        public VerticalAlignment VerticalAlignment
+        {
+            get { return _verticalAlignment; }
+            set
+            {
+                _verticalAlignment = value;
+                NotifyPropertyChanged("VerticalAlignment");
+            }
+        }
+
+        private bool _isElipseVisible;
+
+        public bool IsElipseVisible
+        {
+            get { return _isElipseVisible; }
+            set
+            {
+                _isElipseVisible = value;
+                NotifyPropertyChanged("IsElipseVisible");
+            }
+        }
+
+        private bool _isNextEnabled;
 
         public bool IsNextEnabled
         {
@@ -29,6 +73,30 @@ namespace MousEye.ViewModels
             {
                 _isNextEnabled = value;
                 NotifyPropertyChanged("IsNextEnabled");
+            }
+        }
+
+        private bool _isContentVisible;
+
+        public bool IsContentVisible
+        {
+            get { return _isContentVisible; }
+            set
+            {
+                _isContentVisible = value;
+                NotifyPropertyChanged("IsContentVisible");
+            }
+        }
+
+        private bool _isFinishVisible;
+
+        public bool IsFinishVisible
+        {
+            get { return _isFinishVisible; }
+            set
+            {
+                _isFinishVisible = value;
+                NotifyPropertyChanged("IsFinishVisible");
             }
         }
 
@@ -60,13 +128,36 @@ namespace MousEye.ViewModels
             get { return _captureCommand; }
         }
 
+        private readonly DelegateCommand _calibrationStartCommand;
+
+        public DelegateCommand CalibrationStartCommand
+        {
+            get { return _calibrationStartCommand; }
+        }
+
+        private readonly DelegateCommand _calibrationFinishCommand;
+
+        public DelegateCommand CalibrationFinishCommand
+        {
+            get { return _calibrationFinishCommand; }
+        }
+
         public CalibrationViewModel(CameraViewModel vm)
         {
             _viewModel = vm;
 
             _stepCount = 1;
-            IsNextEnabled = false;
             _counter = 0;
+            _tick = 0;
+            IsNextEnabled = false;
+            IsElipseVisible = false;
+            IsFinishVisible = false;
+            IsContentVisible = true;
+            HorizontalAlignment = HorizontalAlignment.Left;
+            VerticalAlignment = VerticalAlignment.Top;
+
+            _timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0) };
+            _timer.Tick += TimerOnTick;
 
             TabCategory = new ObservableCollection<CalibrationTabItem>
             {
@@ -75,6 +166,58 @@ namespace MousEye.ViewModels
 
             _nextCommand = new DelegateCommand<string>(NextStep);
             _captureCommand = new DelegateCommand(Capture);
+            _calibrationStartCommand = new DelegateCommand(CalibrationStart);
+            _calibrationFinishCommand = new DelegateCommand(CalibrationFinish);
+        }
+
+        private void CalibrationFinish()
+        {
+        }
+
+        private void TimerOnTick(object sender, EventArgs eventArgs)
+        {
+            switch (_tick)
+            {
+                case 0:
+                    _tick++;
+                    IsElipseVisible = true;
+                    HorizontalAlignment = HorizontalAlignment.Left;
+                    VerticalAlignment = VerticalAlignment.Top;
+                    _timer.Interval = new TimeSpan(0, 0, 3);
+                    break;
+
+                case 1:
+                    ImageProcessing.SaveCoords(0);
+                    HorizontalAlignment = HorizontalAlignment.Right;
+                    _tick++;
+                    break;
+
+                case 2:
+                    ImageProcessing.SaveCoords(1);
+                    VerticalAlignment = VerticalAlignment.Bottom;
+                    _tick++;
+                    break;
+
+                case 3:
+                    ImageProcessing.SaveCoords(2);
+                    HorizontalAlignment = HorizontalAlignment.Left;
+                    _tick++;
+                    break;
+
+                case 4:
+                    ImageProcessing.SaveCoords(3);
+                    _tick = 0;
+                    _timer.Stop();
+                    IsElipseVisible = false;
+                    IsFinishVisible = true;
+                    break;
+            }
+        }
+
+        private void CalibrationStart()
+        {
+            _timer.Start();
+            IsContentVisible = false;
         }
 
         private void NextStep(string step)
@@ -88,6 +231,11 @@ namespace MousEye.ViewModels
                         TabCategory.Add(new CalibrationTabItem("Camera position", new Step2(_viewModel)));
                         SelectedCategory = TabCategory.Last();
                         _stepCount++;
+
+                        if (_viewModel.CameraDevice == null)
+                        {
+                            _viewModel.Start();
+                        }
                     }
 
                     break;
@@ -108,8 +256,17 @@ namespace MousEye.ViewModels
 
                     if (_stepCount == 3)
                     {
-                        var calWindow = new Step4(_viewModel);
-                        calWindow.Show();
+                        _temp = new Step4(_viewModel);
+                        _temp.Show();
+                        _stepCount++;
+                        break;
+                    }
+
+                    if (_stepCount == 4)
+                    {
+                        if (_temp != null) _temp.Close();
+                        TabCategory.Add(new CalibrationTabItem("That's it!", new Step5(_viewModel)));
+                        SelectedCategory = TabCategory.Last();
                     }
 
                     break;

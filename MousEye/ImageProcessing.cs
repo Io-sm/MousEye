@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using Point = System.Windows.Point;
 
 namespace MousEye
 {
@@ -20,6 +21,22 @@ namespace MousEye
         private static bool _isFirstBitmap = true;
 
         private static int[] _rectSize = new int[2];
+
+        private static Point _topLeft;
+
+        private static Point _topRight;
+
+        private static Point _bottomRight;
+
+        private static Point _bottomLeft;
+
+        private static int _miniX;
+
+        private static int _miniY;
+
+        private static int _maxiX;
+
+        private static int _maxiY;
 
         #endregion PRIVATES
 
@@ -139,10 +156,10 @@ namespace MousEye
             byte[] rgbValues;
             var bitmap = ConvertToBitmap(originalBitmap, out rgbValues, out numBytes);
 
-            var maxY = 0;
-            var minY = 240;
-            var maxX = 0;
-            var minX = 320;
+            var _maxY = 0;
+            var _minY = 240;
+            var _maxX = 0;
+            var _minX = 320;
 
             for (var i = 0; i < numBytes; i += 4)
             {
@@ -153,34 +170,34 @@ namespace MousEye
                 rgbValues[i + 1] = 192;
                 rgbValues[i + 2] = 203;
 
-                if ((i - ((i / 1280)) * 1280) / 4 < minX)
+                if ((i - ((i / 1280)) * 1280) / 4 < _minX)
                 {
-                    minX = ((i - ((i / 1280)) * 1280) / 4);
+                    _minX = ((i - ((i / 1280)) * 1280) / 4);
                 }
 
-                if ((i - ((i / 1280)) * 1280) / 4 > maxX)
+                if ((i - ((i / 1280)) * 1280) / 4 > _maxX)
                 {
-                    maxX = ((i - ((i / 1280)) * 1280) / 4);
+                    _maxX = ((i - ((i / 1280)) * 1280) / 4);
                 }
 
-                if (i / 1280 < minY)
+                if (i / 1280 < _minY)
                 {
-                    minY = (i / 1280);
+                    _minY = (i / 1280);
                 }
 
-                if (i / 1280 > maxY)
+                if (i / 1280 > _maxY)
                 {
-                    maxY = (i / 1280);
+                    _maxY = (i / 1280);
                 }
             }
 
-            var y1 = (minY * 1280) - 1280;
-            var y2 = (maxY * 1280) + 1280;
+            var y1 = (_minY * 1280) - 1280;
+            var y2 = (_maxY * 1280) + 1280;
 
             for (var i = y1; i < y2; i += 4)
             {
-                if ((i - ((i / 1280)) * 1280) / 4 <= minX - 1 || (i - ((i / 1280)) * 1280) / 4 >= maxX + 1) continue;
-                if ((i - (i / 1280) * 1280) / 4 > minX && (i - ((i / 1280)) * 1280) / 4 < maxX && i / 1280 > minY - 1 && i / 1280 < maxY)
+                if ((i - ((i / 1280)) * 1280) / 4 <= _minX - 1 || (i - ((i / 1280)) * 1280) / 4 >= _maxX + 1) continue;
+                if ((i - (i / 1280) * 1280) / 4 > _minX && (i - ((i / 1280)) * 1280) / 4 < _maxX && i / 1280 > _minY - 1 && i / 1280 < _maxY)
                 {
                     continue;
                 }
@@ -194,8 +211,13 @@ namespace MousEye
             Marshal.Copy(rgbValues, 0, bitmapWrite.Scan0, numBytes);
             bitmap.UnlockBits(bitmapWrite);
 
-            _rectSize[0] = maxX - minX;
-            _rectSize[1] = maxY - minY;
+            _rectSize[0] = _maxX - _minX;
+            _rectSize[1] = _maxY - _minY;
+
+            _maxiX = _maxX;
+            _miniX = _minX;
+            _maxiY = _maxY;
+            _miniY = _minY;
 
             return bitmap;
         }
@@ -280,6 +302,28 @@ namespace MousEye
             temp[1] = _rectSize[1];
 
             return temp;
+        }
+
+        public static void SaveCoords(int value)
+        {
+            switch (value)
+            {
+                case 0:
+                    _topLeft = new Point(_miniX, _miniY);
+                    break;
+
+                case 1:
+                    _topRight = new Point(_maxiX, _miniY);
+                    break;
+
+                case 2:
+                    _bottomRight = new Point(_maxiX, _maxiY);
+                    break;
+
+                case 3:
+                    _bottomLeft = new Point(_miniX, _maxiY);
+                    break;
+            }
         }
 
         #endregion STATIC METHODS
