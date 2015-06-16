@@ -22,30 +22,6 @@ namespace MousEye.ViewModels
 
         private int _counter;
 
-        private int _windowWidth;
-
-        public int WindowWidth
-        {
-            get { return _windowWidth; }
-            set
-            {
-                _windowWidth = value;
-                NotifyPropertyChanged("WindowWidth");
-            }
-        }
-
-        private int _windowHeight;
-
-        public int WindowHeight
-        {
-            get { return _windowHeight; }
-            set
-            {
-                _windowHeight = value;
-                NotifyPropertyChanged("WindowHeight");
-            }
-        }
-
         public bool IsNextEnabled
         {
             get { return _isNextEnabled; }
