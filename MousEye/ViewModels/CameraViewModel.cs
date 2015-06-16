@@ -19,6 +19,8 @@ namespace MousEye.ViewModels
 
         private readonly int _cameraIndex;
 
+        private CameraDevice CameraDevice { get; set; }
+
         #endregion PRIVATE
 
         #region COMMANDS
@@ -224,6 +226,18 @@ namespace MousEye.ViewModels
             }
         }
 
+        private BitmapSource _calibrationImage;
+
+        public BitmapSource CalibrationImage
+        {
+            get { return _calibrationImage; }
+            set
+            {
+                _calibrationImage = value;
+                NotifyPropertyChanged("CalibrationImage");
+            }
+        }
+
         private BitmapSource _finalImage;
 
         public BitmapSource FinalImage
@@ -239,8 +253,6 @@ namespace MousEye.ViewModels
         #endregion IMAGE PROPERTIES
 
         #region PROPERTIES
-
-        public CameraDevice CameraDevice { get; set; }
 
         private bool _isStartEnabled;
 
@@ -266,6 +278,8 @@ namespace MousEye.ViewModels
             }
         }
 
+        public CalibrationViewModel CalibrationViewModel { get; private set; }
+
         #endregion PROPERTIES
 
         #region CONSTRUCTORS
@@ -277,6 +291,8 @@ namespace MousEye.ViewModels
             _startCommand = new DelegateCommand(Start);
             _settingsManagerCommand = new DelegateCommand<string>(OpenSettingsManager);
             _restoreDefaultsCommand = new DelegateCommand(DefaultValues);
+
+            CalibrationViewModel = new CalibrationViewModel(this);
 
             Application.Current.Exit += OnCurrentExit;
 
@@ -309,10 +325,21 @@ namespace MousEye.ViewModels
 
         private void OnImageChanged(object sender, EventArgs eventArgs)
         {
-            ImageProcessing.ProcessImage(CameraDevice.BitmapSource, Threshold);
-            InvertedImage = ImageProcessing.InvertedBitmap;
-            BinaryImage = ImageProcessing.BinaryBitmap;
-            FinalImage = ImageProcessing.FinalImage;
+            try
+            {
+                ImageProcessing.ProcessImage(CameraDevice.BitmapSource, Threshold);
+                InvertedImage = ImageProcessing.InvertedBitmap;
+                BinaryImage = ImageProcessing.BinaryBitmap;
+                CalibrationImage = ImageProcessing.CalibrationBitmap;
+                FinalImage = ImageProcessing.FinalImage;
+            }
+            catch (IndexOutOfRangeException)
+            {
+                if (Threshold <= 1)
+                {
+                    Threshold += 0.08;
+                }
+            }
         }
 
         #endregion EVENT HANDLERS
@@ -364,6 +391,8 @@ namespace MousEye.ViewModels
                     break;
 
                 case "calibration":
+
+                    SettingsManager.CalibrationSettings(this);
 
                     break;
             }

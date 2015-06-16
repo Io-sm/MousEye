@@ -95,6 +95,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -119,7 +120,24 @@
       <DependentUpon>CustomSpinner.xaml</DependentUpon>
     </Compile>
     <Compile Include="SettingsManager.cs" />
+    <Compile Include="Utility\CalibrationTabItem.cs" />
+    <Compile Include="ViewModels\CalibrationViewModel.cs" />
     <Compile Include="ViewModels\CameraViewModel.cs" />
+    <Compile Include="Views\CalibrationSteps\Step1.xaml.cs">
+      <DependentUpon>Step1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CalibrationSteps\Step2.xaml.cs">
+      <DependentUpon>Step2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CalibrationSteps\Step3.xaml.cs">
+      <DependentUpon>Step3.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CalibrationSteps\Step4.xaml.cs">
+      <DependentUpon>Step4.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CameraCalibration.xaml.cs">
+      <DependentUpon>CameraCalibration.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CameraSettings.xaml.cs">
       <DependentUpon>CameraSettings.xaml</DependentUpon>
     </Compile>
@@ -148,6 +166,26 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\CalibrationSteps\Step1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CalibrationSteps\Step2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CalibrationSteps\Step3.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CalibrationSteps\Step4.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CameraCalibration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CameraSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

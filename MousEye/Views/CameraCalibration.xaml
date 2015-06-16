@@ -1,0 +1,27 @@
+﻿<Window x:Class="MousEye.Views.CameraCalibration"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:viewModels="clr-namespace:MousEye.ViewModels"
+        Title="Camera Calibration Settings" Height="600" Width="600"
+        WindowStartupLocation="CenterScreen" Background="Gray" ResizeMode="NoResize">
+
+    <Window.DataContext>
+        <viewModels:CameraViewModel />
+    </Window.DataContext>
+
+    <TabControl ItemsSource="{Binding CalibrationViewModel.TabCategory}"
+        SelectedItem="{Binding CalibrationViewModel.SelectedCategory}" Background="Gray">
+
+        <TabControl.ItemTemplate>
+            <DataTemplate>
+                <HeaderedContentControl Header="{Binding TabHeader}" />
+            </DataTemplate>
+        </TabControl.ItemTemplate>
+
+        <TabControl.ContentTemplate>
+            <DataTemplate>
+                <ContentControl Content="{Binding TabContent}" />
+            </DataTemplate>
+        </TabControl.ContentTemplate>
+    </TabControl>
+</Window>

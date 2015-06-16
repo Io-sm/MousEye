@@ -17,6 +17,10 @@ namespace MousEye
 
         private static Bitmap _temporaryBitmap;
 
+        private static bool _isFirstBitmap = true;
+
+        private static int[] _rectSize = new int[2];
+
         #endregion PRIVATES
 
         #region IMAGE PROPERTIES
@@ -26,6 +30,8 @@ namespace MousEye
         public static InteropBitmap BinaryBitmap { get; private set; }
 
         public static InteropBitmap FinalImage { get; private set; }
+
+        public static InteropBitmap CalibrationBitmap { get; private set; }
 
         #endregion IMAGE PROPERTIES
 
@@ -133,10 +139,10 @@ namespace MousEye
             byte[] rgbValues;
             var bitmap = ConvertToBitmap(originalBitmap, out rgbValues, out numBytes);
 
-            var max_y = 0;
-            var min_y = 240;
-            var max_x = 0;
-            var min_x = 320;
+            var maxY = 0;
+            var minY = 240;
+            var maxX = 0;
+            var minX = 320;
 
             for (var i = 0; i < numBytes; i += 4)
             {
@@ -147,38 +153,75 @@ namespace MousEye
                 rgbValues[i + 1] = 192;
                 rgbValues[i + 2] = 203;
 
-                if ((i - ((i / 1280)) * 1280) / 4 < min_x)
+                if ((i - ((i / 1280)) * 1280) / 4 < minX)
                 {
-                    min_x = (i - ((i / 1280)) * 1280) / 4;
+                    minX = ((i - ((i / 1280)) * 1280) / 4);
                 }
 
-                if ((i - ((i / 1280)) * 1280) / 4 > max_x)
+                if ((i - ((i / 1280)) * 1280) / 4 > maxX)
                 {
-                    max_x = (i - ((i / 1280)) * 1280) / 4;
+                    maxX = ((i - ((i / 1280)) * 1280) / 4);
                 }
 
-                if (i / 1280 < min_y)
+                if (i / 1280 < minY)
                 {
-                    min_y = i / 1280;
+                    minY = (i / 1280);
                 }
 
-                if (i / 1280 > max_y)
+                if (i / 1280 > maxY)
                 {
-                    max_y = i / 1280;
+                    maxY = (i / 1280);
                 }
             }
 
-            var a1 = (min_y*1280) + (min_y*4);
-            var a2 = (max_y * 1280) + (max_y * 4);
-            for (var i = a1; i < a2; i += 4)
+            var y1 = (minY * 1280) - 1280;
+            var y2 = (maxY * 1280) + 1280;
+
+            for (var i = y1; i < y2; i += 4)
             {
-                    rgbValues[i] = 0;
-                    rgbValues[i + 1] = 0;
-                    rgbValues[i + 2] = 0;
+                if ((i - ((i / 1280)) * 1280) / 4 <= minX - 1 || (i - ((i / 1280)) * 1280) / 4 >= maxX + 1) continue;
+                if ((i - (i / 1280) * 1280) / 4 > minX && (i - ((i / 1280)) * 1280) / 4 < maxX && i / 1280 > minY - 1 && i / 1280 < maxY)
+                {
+                    continue;
+                }
+                rgbValues[i] = 0;
+                rgbValues[i + 1] = 0;
+                rgbValues[i + 2] = 0;
             }
 
             var bitmapWrite = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly,
                 bitmap.PixelFormat);
+            Marshal.Copy(rgbValues, 0, bitmapWrite.Scan0, numBytes);
+            bitmap.UnlockBits(bitmapWrite);
+
+            _rectSize[0] = maxX - minX;
+            _rectSize[1] = maxY - minY;
+
+            return bitmap;
+        }
+
+        private static Bitmap CalibrateBitmap(InteropBitmap originalBitmap)
+        {
+            int numBytes;
+            byte[] rgbValues;
+            var bitmap = ConvertToBitmap(originalBitmap, out rgbValues, out numBytes);
+
+            for (var i = bitmap.Width * 2; i < numBytes; i += bitmap.Width * 4)
+            {
+                rgbValues[i] = 0;
+                rgbValues[i + 1] = 255;
+                rgbValues[i + 2] = 255;
+            }
+
+            for (var i = bitmap.Height / 2 * 1280; i < bitmap.Height / 2 * 1280 + 1280; i += 4)
+            {
+                rgbValues[i] = 0;
+                rgbValues[i + 1] = 255;
+                rgbValues[i + 2] = 255;
+            }
+
+            var bitmapWrite = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.WriteOnly,
+            bitmap.PixelFormat);
             Marshal.Copy(rgbValues, 0, bitmapWrite.Scan0, numBytes);
             bitmap.UnlockBits(bitmapWrite);
 
@@ -187,8 +230,23 @@ namespace MousEye
 
         public static void ProcessImage(InteropBitmap bmp, double threshold)
         {
+            if (_isFirstBitmap)
+            {
+                _isFirstBitmap = !_isFirstBitmap;
+                return;
+            }
+
+            var calibrationBitmap = CalibrateBitmap(bmp);
+            var hbitmap = calibrationBitmap.GetHbitmap();
+
+            CalibrationBitmap = Imaging.CreateBitmapSourceFromHBitmap(hbitmap, IntPtr.Zero,
+                Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()) as InteropBitmap;
+
+            CameraDevice.DeleteObject(hbitmap);
+            calibrationBitmap.Dispose();
+
             var bitmap = InvertImage(bmp);
-            var hbitmap = bitmap.GetHbitmap();
+            hbitmap = bitmap.GetHbitmap();
 
             InvertedBitmap = Imaging.CreateBitmapSourceFromHBitmap(hbitmap, IntPtr.Zero,
                 Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions()) as InteropBitmap;
@@ -212,6 +270,16 @@ namespace MousEye
 
             CameraDevice.DeleteObject(hbitmap);
             temp.Dispose();
+        }
+
+        public static int[] GetRectSize()
+        {
+            var temp = new int[2];
+
+            temp[0] = _rectSize[0];
+            temp[1] = _rectSize[1];
+
+            return temp;
         }
 
         #endregion STATIC METHODS
