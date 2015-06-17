@@ -431,11 +431,11 @@ namespace MousEye
             Destroy();
         }
 
-        public bool Create(Guid cameraGuid)
+        public void Create(Guid cameraGuid)
         {
             int w = 0, h = 0;
             _camera = CLEyeCreateCamera(cameraGuid, ColorMode, Resolution, Framerate);
-            if (_camera == IntPtr.Zero) return false;
+            if (_camera == IntPtr.Zero) return;
             CLEyeCameraGetFrameDimensions(_camera, ref w, ref h);
 
             var imageSize = (uint)w * (uint)h;
@@ -445,7 +445,6 @@ namespace MousEye
 
             if (BitmapReady != null) BitmapReady(this, null);
             if (BitmapSource != null) BitmapSource.Invalidate();
-            return true;
         }
 
         public void Destroy()

@@ -277,7 +277,7 @@ namespace MousEye.ViewModels
                     IsElipseVisible = true;
                     HorizontalAlignment = HorizontalAlignment.Left;
                     VerticalAlignment = VerticalAlignment.Top;
-                    _timer.Interval = new TimeSpan(0, 0, 3);
+                    _timer.Interval = new TimeSpan(0, 0, 0, 0, 200);
                     break;
 
                 case 1:
@@ -304,6 +304,7 @@ namespace MousEye.ViewModels
                     _timer.Stop();
                     IsElipseVisible = false;
                     IsFinishVisible = true;
+                    NextStep("Step3View");
                     break;
             }
         }

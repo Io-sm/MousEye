@@ -1,4 +1,6 @@
 ﻿using MousEye.ViewModels;
+using System.ComponentModel;
+using System.Windows;
 
 namespace MousEye.Views
 {
@@ -8,6 +10,12 @@ namespace MousEye.Views
         {
             InitializeComponent();
             DataContext = vm;
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            e.Cancel = true;
+            Visibility = Visibility.Hidden;
         }
     }
 }

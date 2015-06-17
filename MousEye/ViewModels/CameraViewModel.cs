@@ -46,6 +46,27 @@ namespace MousEye.ViewModels
             get { return _mainteanceViewCommand; }
         }
 
+        private readonly DelegateCommand _closeApplicationCommand;
+
+        public DelegateCommand CloseApplicationCommand
+        {
+            get { return _closeApplicationCommand; }
+        }
+
+        private readonly DelegateCommand _suspendExecutionCommand;
+
+        public DelegateCommand SuspendExecutionCommand
+        {
+            get { return _suspendExecutionCommand; }
+        }
+
+        private readonly DelegateCommand _startExecutionCommand;
+
+        public DelegateCommand StartExecutionCommand
+        {
+            get { return _startExecutionCommand; }
+        }
+
         #endregion COMMANDS
 
         #region CAMERA PROPERTIES
@@ -277,8 +298,45 @@ namespace MousEye.ViewModels
             get { return _isMainteanceViewVisible; }
             set
             {
+                MainteanceContextMenuMessage = value ? "Close mainteance window" : "Open mainteance window";
                 _isMainteanceViewVisible = value;
                 NotifyPropertyChanged("IsMainteanceViewVisible");
+            }
+        }
+
+        private string _mainteanceContextMenuMessage = "Open mainteance window";
+
+        public string MainteanceContextMenuMessage
+        {
+            get { return _mainteanceContextMenuMessage; }
+            set
+            {
+                _mainteanceContextMenuMessage = value;
+                NotifyPropertyChanged("MainteanceContextMenuMessage");
+            }
+        }
+
+        private string _iconFileSource = "../../Icons/Run.ico";
+
+        public string IconFileSource
+        {
+            get { return _iconFileSource; }
+            set
+            {
+                _iconFileSource = value;
+                NotifyPropertyChanged("IconFileSource");
+            }
+        }
+
+        private string _toolTipText = "MousEye is running.";
+
+        public string ToolTipText
+        {
+            get { return _toolTipText; }
+            set
+            {
+                _toolTipText = value;
+                NotifyPropertyChanged("ToolTipText");
             }
         }
 
@@ -292,6 +350,9 @@ namespace MousEye.ViewModels
             _settingsManagerCommand = new DelegateCommand<string>(OpenSettingsManager);
             _restoreDefaultsCommand = new DelegateCommand(DefaultValues);
             _mainteanceViewCommand = new DelegateCommand(MainteanceViewVisibility);
+            _closeApplicationCommand = new DelegateCommand(Application.Current.Shutdown);
+            _suspendExecutionCommand = new DelegateCommand(SuspendExecution);
+            _startExecutionCommand = new DelegateCommand(StartExecution);
 
             CalibrationViewModel = new CalibrationViewModel(this);
 
@@ -400,6 +461,18 @@ namespace MousEye.ViewModels
             }
 
             IsMainteanceViewVisible = false;
+        }
+
+        private void StartExecution()
+        {
+            IconFileSource = "../../Icons/Run.ico";
+            ToolTipText = "MousEye is running.";
+        }
+
+        private void SuspendExecution()
+        {
+            IconFileSource = "../../Icons/Stop.ico";
+            ToolTipText = "MousEye is stopped.";
         }
 
         #endregion METHODS

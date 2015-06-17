@@ -3,15 +3,33 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:tb="http://www.hardcodet.net/taskbar"
         Title="MousEye" Height="700" Width="800" Background="Gray" ResizeMode="NoResize"
-        DataContext="{Binding}" Visibility="{Binding IsMainteanceViewVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+        DataContext="{Binding}" Visibility="{Binding IsMainteanceViewVisible, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+    <Window.Resources>
+        <Border x:Key="PopUp" Background="White" BorderThickness="2" BorderBrush="Blue" CornerRadius="4" Width="160" Height="40">
+            <Grid>
+                <Button Content="Start" Command="{Binding StartExecutionCommand}" Width="80" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                <Button Content="Stop" Command="{Binding SuspendExecutionCommand}" Width="80" Height="40" HorizontalAlignment="Right" VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+        <ContextMenu x:Key="ContextMenu">
+            <MenuItem Header="{Binding MainteanceContextMenuMessage}" Command="{Binding MainteanceViewCommand}" />
+            <MenuItem Header="Close application" Command="{Binding CloseApplicationCommand}" />
+        </ContextMenu>
+    </Window.Resources>
 
     <Grid>
-        <tb:TaskbarIcon IconSource="/Icons/mouseye.ico" ToolTipText="Mainteance Window" LeftClickCommand="{Binding MainteanceViewCommand}" />
+        <tb:TaskbarIcon IconSource="{Binding IconFileSource}" ToolTipText="{Binding ToolTipText}"
+                        MenuActivation="RightClick"
+                        TrayPopup="{StaticResource PopUp}"
+                        ContextMenu="{StaticResource ContextMenu}">
+        </tb:TaskbarIcon>
+
         <TextBlock Text="{Binding Message}" Background="LightGray" TextWrapping="Wrap" Width="380" Margin="10,500,410,91" />
         <Image Source="{Binding OriginalImage}" Width="380" Height="240" Margin="10,10,410,0" VerticalAlignment="Top" IsHitTestVisible="False" />
         <Image Source="{Binding InvertedImage}" Width="380" Height="240" Margin="410,10,10,0" VerticalAlignment="Top" IsHitTestVisible="False" />
         <Image Source="{Binding BinaryImage}" Width="380" Height="240" Margin="10,255,410,0" VerticalAlignment="Top" IsHitTestVisible="False" />
-        <Image Source="{Binding FinalImage}" Width="380" Height="240" Margin="414,255,0,0" VerticalAlignment="Top" IsHitTestVisible="False" />
+        <Image Source="{Binding FinalImage}" Width="380" Height="240" Margin="410,255,4,0" VerticalAlignment="Top" IsHitTestVisible="False" />
         <Button Content="Settings" Command="{Binding SettingsManagerCommand}" CommandParameter="camera" HorizontalAlignment="Left" Height="31" Margin="10,614,0,0" VerticalAlignment="Top" Width="191" />
     </Grid>
 </Window>

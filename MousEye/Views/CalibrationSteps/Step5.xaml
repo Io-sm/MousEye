@@ -8,6 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance viewModels:CameraViewModel}">
     <Grid>
-        <Button Content="Go" Command="{Binding CalibrationViewModel.CalibrationFinishCommand}" HorizontalAlignment="Left" Height="111" Margin="62,120,0,0" VerticalAlignment="Top" Width="179" />
+        <Button Content="Start!" Command="{Binding CalibrationViewModel.CalibrationFinishCommand}" Margin="89,0,89,25" Height="38" VerticalAlignment="Bottom" />
+        <TextBlock Margin="10,10,10,68" TextWrapping="Wrap" FontSize="20" TextAlignment="Center" Text="Congratulations! You have finished the calibration process. To begin press button below. You can access camera settings and mainteance window by clicking on the MousEye icon in the system tray." />
     </Grid>
 </UserControl>
