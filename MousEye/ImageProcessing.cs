@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -324,6 +325,16 @@ namespace MousEye
                     _bottomLeft = new Point(_miniX, _maxiY);
                     break;
             }
+        }
+
+        public static Point GetRectMiddle()
+        {
+            return new Point((_miniX + (_maxiX - _miniX) / 2), (_miniY + (_maxiY - _miniY) / 2));
+        }
+
+        public static List<Point> GetCoords()
+        {
+            return new List<Point>() { _topLeft, _topRight, _bottomRight, _bottomLeft };
         }
 
         #endregion STATIC METHODS

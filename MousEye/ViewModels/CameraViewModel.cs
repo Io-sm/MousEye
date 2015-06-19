@@ -1,9 +1,13 @@
 ﻿using Microsoft.Practices.Prism.Commands;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
 
 namespace MousEye.ViewModels
 {
@@ -20,6 +24,8 @@ namespace MousEye.ViewModels
         #region PRIVATE
 
         private readonly int _cameraIndex;
+
+        private int _mCounter;
 
         #endregion PRIVATE
 
@@ -340,6 +346,8 @@ namespace MousEye.ViewModels
             }
         }
 
+        public bool IsRunning;
+
         #endregion PROPERTIES
 
         #region CONSTRUCTORS
@@ -401,6 +409,17 @@ namespace MousEye.ViewModels
             {
                 Threshold += 0.08;
             }
+
+            if (IsRunning && _mCounter == Framerate / 4)
+            {
+                MoveMouse();
+                _mCounter = 0;
+            }
+
+            if (IsRunning)
+            {
+                _mCounter++;
+            }
         }
 
         #endregion EVENT HANDLERS
@@ -460,19 +479,83 @@ namespace MousEye.ViewModels
                 return;
             }
 
-            IsMainteanceViewVisible = false;
+            IsMainteanceViewVisible = true;
         }
 
         private void StartExecution()
         {
             IconFileSource = "../../Icons/Run.ico";
             ToolTipText = "MousEye is running.";
+            IsRunning = true;
         }
 
         private void SuspendExecution()
         {
             IconFileSource = "../../Icons/Stop.ico";
             ToolTipText = "MousEye is stopped.";
+            IsRunning = false;
+        }
+
+        private void MoveMouse()
+        {
+            Point tempPoint;
+            var realPointList = CalculatePosition(ImageProcessing.GetCoords(), out tempPoint);
+
+            var c = 59 * 13.4828;
+            c = Math.Round(c);
+
+            var d = 59 * Math.Round(13.4828);
+
+            var x = Screen.PrimaryScreen.Bounds.Width / realPointList[2].X;
+            var y = Screen.PrimaryScreen.Bounds.Height / realPointList[2].Y;
+
+            var w_x = tempPoint.X * x;
+            var w_y = tempPoint.Y * y;
+
+            MouseManipulation.SetCursorPos((int)Math.Round(w_x), (int)Math.Round(w_y));
+        }
+
+        private List<Point> CalculatePosition(List<Point> points, out Point point)
+        {
+            points.Insert(1, new Point(points[1].X, points[0].Y));
+            points.RemoveAt(2);
+
+            points.Insert(2, new Point(points[1].X, points[2].Y));
+            points.RemoveAt(3);
+
+            points.Insert(3, new Point(points[0].X, points[2].Y));
+            points.RemoveAt(4);
+
+            var list = new List<Point>();
+
+            var middlePoint = ImageProcessing.GetRectMiddle();
+
+            foreach (var variable in points)
+            {
+                list.Add(variable);
+            }
+
+            for (var i = 0; i < list.Count; i++)
+            {
+                list.Insert(i, new Point(points[i].X - points[0].X, points[i].Y - points[0].Y));
+                list.RemoveAt(i + 1);
+            }
+
+            var tempx = middlePoint.X - points[0].X;
+            if (tempx < 0)
+            {
+                tempx = 0;
+            }
+
+            var tempy = middlePoint.Y - points[0].Y;
+            if (tempy < 0)
+            {
+                tempy = 0;
+            }
+
+            point = new Point(tempx, tempy);
+
+            return list;
         }
 
         #endregion METHODS

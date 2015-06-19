@@ -197,6 +197,7 @@ namespace MousEye.ViewModels
         {
             new MainteanceView(_viewModel);
             _viewModel.OnClosingRequest();
+            _viewModel.IsRunning = true;
         }
 
         private void CalibrationStart()
@@ -277,7 +278,7 @@ namespace MousEye.ViewModels
                     IsElipseVisible = true;
                     HorizontalAlignment = HorizontalAlignment.Left;
                     VerticalAlignment = VerticalAlignment.Top;
-                    _timer.Interval = new TimeSpan(0, 0, 0, 0, 200);
+                    _timer.Interval = new TimeSpan(0, 0, 2);
                     break;
 
                 case 1:

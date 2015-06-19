@@ -123,6 +123,7 @@
     <Compile Include="CustomControls\CustomSpinner.xaml.cs">
       <DependentUpon>CustomSpinner.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MouseManipulation.cs" />
     <Compile Include="SettingsManager.cs" />
     <Compile Include="Utility\CalibrationTabItem.cs" />
     <Compile Include="ViewModels\CalibrationViewModel.cs" />
