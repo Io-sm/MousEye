@@ -504,11 +504,20 @@ namespace MousEye.ViewModels
             var list = ImageProcessing.GetCoords();
             var point = ImageProcessing.GetRectMiddle();
 
-            w_x = (int)(Screen.PrimaryScreen.Bounds.Width / (list[1].X - list[0].X));
-            w_y = (int)(Screen.PrimaryScreen.Bounds.Height / (list[4].Y - list[0].Y));
+            var c_w = list[1].X - list[0].X;
+            var c_h = list[3].Y - list[0].Y;
+            var xx = point.X - list[0].X;
+            var yy = point.Y - list[0].Y;
+            var px = (xx*100/c_w);
+            var py = (yy*100/c_w);
 
-            MouseManipulation.SetCursorPos((int)((point.X - list[0].X)*w_x),
-                (int)((point.Y - list[0].X)*w_y));
+            MouseManipulation.SetCursorPos((int)(Screen.PrimaryScreen.Bounds.Width*px),
+                (int)(Screen.PrimaryScreen.Bounds.Height * py));
+            //w_x = (int)(Screen.PrimaryScreen.Bounds.Width / (list[1].X - list[0].X));
+            //w_y = (int)(Screen.PrimaryScreen.Bounds.Height / (list[4].Y - list[0].Y));
+
+            //MouseManipulation.SetCursorPos((int)(()*w_x),
+            //    (int)(()*w_y));
 
             //list[0].X
             //Point tempPoint;
