@@ -13,6 +13,9 @@ namespace MousEye.ViewModels
 {
     public class CameraViewModel : INotifyPropertyChanged
     {
+        private int w_x;
+        private int w_y;
+
         #region EVENTS
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -498,21 +501,31 @@ namespace MousEye.ViewModels
 
         private void MoveMouse()
         {
-            Point tempPoint;
-            var realPointList = CalculatePosition(ImageProcessing.GetCoords(), out tempPoint);
+            var list = ImageProcessing.GetCoords();
+            var point = ImageProcessing.GetRectMiddle();
 
-            var c = 59 * 13.4828;
-            c = Math.Round(c);
+            w_x = (int)(Screen.PrimaryScreen.Bounds.Width / (list[1].X - list[0].X));
+            w_y = (int)(Screen.PrimaryScreen.Bounds.Height / (list[4].Y - list[0].Y));
 
-            var d = 59 * Math.Round(13.4828);
+            MouseManipulation.SetCursorPos((int)((point.X - list[0].X)*w_x),
+                (int)((point.Y - list[0].X)*w_y));
 
-            var x = Screen.PrimaryScreen.Bounds.Width / realPointList[2].X;
-            var y = Screen.PrimaryScreen.Bounds.Height / realPointList[2].Y;
+            //list[0].X
+            //Point tempPoint;
+            //var realPointList = CalculatePosition(ImageProcessing.GetCoords(), out tempPoint);
 
-            var w_x = tempPoint.X * x;
-            var w_y = tempPoint.Y * y;
+            //var c = 59 * 13.4828;
+            //c = Math.Round(c);
 
-            MouseManipulation.SetCursorPos((int)Math.Round(w_x), (int)Math.Round(w_y));
+            //var d = 59 * Math.Round(13.4828);
+
+            //var x = Screen.PrimaryScreen.Bounds.Width / realPointList[2].X;
+            //var y = Screen.PrimaryScreen.Bounds.Height / realPointList[2].Y;
+
+            //var w_x = tempPoint.X * x;
+            //var w_y = tempPoint.Y * y;
+
+            //MouseManipulation.SetCursorPos((int)Math.Round(w_x), (int)Math.Round(w_y));
         }
 
         private List<Point> CalculatePosition(List<Point> points, out Point point)
