@@ -508,33 +508,11 @@ namespace MousEye.ViewModels
             var c_h = list[3].Y - list[0].Y;
             var xx = point.X - list[0].X;
             var yy = point.Y - list[0].Y;
-            var px = (xx*100/c_w);
-            var py = (yy*100/c_w);
+            var px = (xx/c_w);
+            var py = (yy/ c_h);
 
             MouseManipulation.SetCursorPos((int)(Screen.PrimaryScreen.Bounds.Width*px),
                 (int)(Screen.PrimaryScreen.Bounds.Height * py));
-            //w_x = (int)(Screen.PrimaryScreen.Bounds.Width / (list[1].X - list[0].X));
-            //w_y = (int)(Screen.PrimaryScreen.Bounds.Height / (list[4].Y - list[0].Y));
-
-            //MouseManipulation.SetCursorPos((int)(()*w_x),
-            //    (int)(()*w_y));
-
-            //list[0].X
-            //Point tempPoint;
-            //var realPointList = CalculatePosition(ImageProcessing.GetCoords(), out tempPoint);
-
-            //var c = 59 * 13.4828;
-            //c = Math.Round(c);
-
-            //var d = 59 * Math.Round(13.4828);
-
-            //var x = Screen.PrimaryScreen.Bounds.Width / realPointList[2].X;
-            //var y = Screen.PrimaryScreen.Bounds.Height / realPointList[2].Y;
-
-            //var w_x = tempPoint.X * x;
-            //var w_y = tempPoint.Y * y;
-
-            //MouseManipulation.SetCursorPos((int)Math.Round(w_x), (int)Math.Round(w_y));
         }
 
         private List<Point> CalculatePosition(List<Point> points, out Point point)
